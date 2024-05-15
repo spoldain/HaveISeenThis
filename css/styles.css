@@ -10,7 +10,9 @@ body {
 }
 
 h1 {
-    text-align: center;
+    font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
+    font-weight: bold; /* Ensure bold weight */
+    font-size: 18px; /* Increase font size as needed */
 }
 
 #spinwheel-section {
