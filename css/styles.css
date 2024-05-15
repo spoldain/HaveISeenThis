@@ -12,6 +12,7 @@ body {
 /* Have I Seen This h1 */
 .website-title {
     font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
+    text-transform: uppercase; /* Make text uppercase */
     font-weight: bold; /* Ensure bold weight */
     font-size: 25px; /* Increase font size as needed */
 }
