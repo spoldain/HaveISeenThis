@@ -63,6 +63,9 @@ h1 {
 }
 
 #spin-button {
+    font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
+    font-weight: bold; /* Ensure bold weight */
+    font-size: 18px; /* Increase font size as needed */
     position: absolute;
     bottom: -50px; /* Adjust as needed */
     left: 50%;
