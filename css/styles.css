@@ -65,6 +65,7 @@ h1 {
 }
 
 #spin-button {
+    text-transform: uppercase; /* Make text uppercase */
     font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
     font-weight: bold; /* Ensure bold weight */
     font-size: 18px; /* Increase font size as needed */
