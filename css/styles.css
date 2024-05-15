@@ -51,7 +51,7 @@ h1 {
     max-width: 100%; /* Ensure image fits within container */
     max-height: 100%; /* Ensure image fits within container */
     border-radius: 8px; /* Match border radius */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow effect */
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow effect */
 }
 
 .indicator {
