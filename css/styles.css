@@ -15,6 +15,7 @@ body {
     text-transform: uppercase; /* Make text uppercase */
     font-weight: bold; /* Ensure bold weight */
     font-size: 25px; /* Increase font size as needed */
+    opacity: 0.4;
 }
 
 #spinwheel-section {
