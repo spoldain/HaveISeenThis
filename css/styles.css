@@ -1,0 +1,72 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    background-color: #131313;
+    color: white;
+}
+
+h1 {
+    text-align: center;
+}
+
+#spinwheel-section {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.wheel-container {
+    position: relative;
+    width: 100%;
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+}
+
+.wheel {
+    display: flex;
+    transition: transform 1s ease-out;
+}
+
+.wheel-item {
+    min-width: 200px;
+    margin: 10px;
+}
+
+.wheel-item img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.indicator {
+    position: absolute;
+    top: -5px; /* Slight overlap on the top */
+    bottom: -5px; /* Slight overlap on the bottom */
+    left: 0;
+    width: 4px; /* Width of the indicator */
+    background-color: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
+}
+
+#spin-button {
+    position: absolute;
+    bottom: -50px; /* Adjust as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #262626;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+#spin-button:hover {
+    background-color: #333333;
+}
