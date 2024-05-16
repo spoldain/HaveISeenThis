@@ -9,7 +9,10 @@
     color: white;
 }
 
-
+.logo1{
+    width: 50%;
+    height: auto;
+}
 
 /* Have I Seen This h1 */
 .website-title{
