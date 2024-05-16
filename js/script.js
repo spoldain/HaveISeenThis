@@ -51,5 +51,3 @@ setTimeout(() => {
 wheel.style.transition = 'transform 1s ease-out';
 }, 50);
 }, 1000);
-});
-});
