@@ -1,12 +1,12 @@
 /* styles.css */
- .petrolejas-lampa{
+ .lampa{
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 20px;
     background-color: #302340;
-    color: white;
+    color: red;
 }
 
 .logo1{
