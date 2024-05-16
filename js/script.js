@@ -2,16 +2,24 @@ import { apiKey } from './apikey.js';
 
 let spinning = false;
 
-async function fetchAvailableYearsAndGenres() {
+// Function to generate a range of years dynamically
+function generateYears() {
+    const startYear = 1900;
+    const currentYear = new Date().getFullYear();
+    const years = [];
+
+    for (let year = startYear; year <= currentYear; year++) {
+        years.push(year);
+    }
+
+    return years;
+}
+
+// Fetch genres from TMDB API
+async function fetchGenres() {
     const genreResponse = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`);
     const genreData = await genreResponse.json();
-    const genres = genreData.genres;
-
-    const yearResponse = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=release_date.desc`);
-    const yearData = await yearResponse.json();
-    const years = [...new Set(yearData.results.map(movie => new Date(movie.release_date).getFullYear()))];
-
-    return { genres, years };
+    return genreData.genres;
 }
 
 function populateFilterOptions(genres, years) {
@@ -50,7 +58,7 @@ function getSelectedFilters() {
 }
 
 function fetchFilteredMovies(selectedYears, selectedGenres) {
-    const yearQuery = selectedYears.length ? `&primary_release_year=${selectedYears.join(',')}` : '';
+    const yearQuery = selectedYears.length ? `&primary_release_year=${selectedYears.join('|')}` : '';
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
     const randomPage = Math.floor(Math.random() * 500) + 1; // Random page number between 1 and 500
 
@@ -116,7 +124,8 @@ function spinWheel() {
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
-    const { genres, years } = await fetchAvailableYearsAndGenres();
+    const genres = await fetchGenres();
+    const years = generateYears();
     populateFilterOptions(genres, years);
 
     document.getElementById('spin-button').addEventListener('click', function () {
