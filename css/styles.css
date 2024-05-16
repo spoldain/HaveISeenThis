@@ -80,22 +80,30 @@ body .website-title{
 }
 
 .indicator {
-    width: 10px;
-    height: 10px;
+    position: relative;
+     /* Slight overlap on the top */
+    bottom: 5px; /* Slight overlap on the bottom */
+    left: 0;
+    width: 4px; /* Width of the indicator */
     background-color: white;
-    border-radius: 50%;
-    position: absolute;
-    bottom: 5px; /* Adjust position as needed */
-    left: 50%; /* Adjust position as needed */
-    transform: translateX(-50%);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
+    box-shadow: 0 0 7px 3px rgba(0, 0, 0, 0.3); /* Drop shadow effect */
 }
 
+/* old indicator
+.indicator {
+    position: relative;
+    width: 4px;
+    height: 300px;
+    background-color: white;
+    border-radius: 50%;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+*/
+
 #spin-button {
-    text-transform: uppercase; /* Make text uppercase */
-    font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
-    font-weight: bold; /* Ensure bold weight */
-    font-size: 18px; /* Increase font size as needed */
     position: absolute;
     bottom: -50px; /* Adjust as needed */
     left: 50%;
@@ -103,12 +111,13 @@ body .website-title{
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #262626;
+    background-color: #391878;
     color: white;
     border: none;
     border-radius: 4px;
+    
 }
 
 #spin-button:hover {
-    background-color: #333333;
+    background-color: #493273;
 }
