@@ -1,5 +1,5 @@
 /* styles.css */
-body {
+ .petrolejas-lampa{
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
@@ -9,8 +9,10 @@ body {
     color: white;
 }
 
+
+
 /* Have I Seen This h1 */
-body .website-title{
+.website-title{
     font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
     text-transform: uppercase; /* Make text uppercase */
     font-weight: bold; /* Ensure bold weight */
@@ -121,3 +123,4 @@ body .website-title{
 #spin-button:hover {
     background-color: #493273;
 }
+
