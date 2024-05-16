@@ -33,8 +33,30 @@ body {
 }
 
 .wheel {
-    display: flex;
-    transition: transform 1s ease-out;
+    position: relative;
+    overflow: hidden; /* Ensure overflow is hidden */
+    width: 100%; /* Adjust width as needed */
+}
+
+/* Apply gradient mask */
+.wheel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px; /* Adjust width of fade-out area */
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), white); /* Adjust gradient color and direction */
+}
+
+.wheel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px; /* Adjust width of fade-out area */
+    height: 100%;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0), white); /* Adjust gradient color and direction */
 }
 
 .wheel-item {
