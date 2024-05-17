@@ -126,8 +126,6 @@ body {
 
 .movie-poster-container {
     position: absolute;
-    width: 170px; /* 85% of the main poster size */
-    height: 255px; /* maintaining the aspect ratio */
     display: flex;
     justify-content: center;
     align-items: center;

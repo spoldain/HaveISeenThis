@@ -124,9 +124,14 @@ async function displayMovies() {
             let slowdownIntervalId = setInterval(() => {
                 if (interval < 1000) {
                     interval += 100;
-                    spinMovies();
+                    clearInterval(intervalId);
+                    intervalId = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % movies.length;
+                        showMovie(currentIndex);
+                    }, interval);
                 } else {
                     clearInterval(slowdownIntervalId);
+                    clearInterval(intervalId);
                 }
             }, 500);
         }, 2000);
