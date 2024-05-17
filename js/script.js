@@ -60,9 +60,8 @@ function populateYearDropdowns() {
 // Fetch movies based on filters
 async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const numVisibleMovies = 5;
-    const numMoviesToFetch = numVisibleMovies * 5;
-    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31${genreQuery}`);
+    const yearQuery = (yearFrom && yearTo) ? `&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31` : '';
+    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false${yearQuery}${genreQuery}`);
     const data = await response.json();
     return data.results;
 }
@@ -83,25 +82,6 @@ async function displayMovies() {
         img.alt = movie.title;
         img.classList.add('movie-poster');
         movieDisplay.appendChild(img);
-    });
-}
-
-// Show pop-up with movie details
-function showPopup(moviePoster) {
-    const popup = document.querySelector('.popup');
-    const movieTitle = moviePoster.alt;
-    const moviePosterSrc = moviePoster.src;
-
-    popup.innerHTML = `
-        <h2>${movieTitle}</h2>
-        <img src="${moviePosterSrc}" alt="${movieTitle}">
-        <button id="close-popup">Close</button>
-    `;
-
-    popup.style.display = 'flex';
-
-    document.getElementById('close-popup').addEventListener('click', function() {
-        popup.style.display = 'none';
     });
 }
 
@@ -148,6 +128,26 @@ document.getElementById('spin-button').addEventListener('click', async function(
     // Start the animation
     requestAnimationFrame(animateSpin);
 });
+
+// Show pop-up with movie details
+function showPopup(moviePoster) {
+    const popup = document.querySelector('.popup');
+    const movieTitle = moviePoster.alt;
+    const moviePosterSrc = moviePoster.src;
+
+    popup.innerHTML = `
+        <h2>${movieTitle}</h2>
+        <img src="${moviePosterSrc}" alt="${movieTitle}">
+        <button id="close-popup">Close</button>
+    `;
+
+    popup.style.display = 'flex';
+
+    document.getElementById('close-popup').addEventListener('click', function() {
+        popup.style.display = 'none';
+    });
+}
+
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
