@@ -106,6 +106,11 @@ function showPopup(movieItem) {
         <h2>${movieTitle}</h2>
         <img src="${moviePoster}" alt="${movieTitle}">
         <button id="close-popup">Close</button>
+        <button id="more-info-btn">More Info</button>
+        <div id="expanded-info" style="display: none;">
+        <h3>${movieTitle} (from showPopup)</h3> <p id="movie-description"></p>
+        <a id="trailer-link" href="#">Trailer</a>
+        </div>
     `;
 
     popup.style.display = 'flex';
@@ -113,6 +118,36 @@ function showPopup(movieItem) {
     document.getElementById('close-popup').addEventListener('click', function() {
         popup.style.display = 'none';
     });
+
+    const moreInfoBtn = document.createElement('button');
+    moreInfoBtn.id = 'more-info-btn';
+    moreInfoBtn.textContent = 'More Info';
+    popup.appendChild(moreInfoBtn);
+
+     moreInfoBtn.addEventListener('click', () => {
+    // Code to handle "More Info" button click (explained later)
+  });
+
+  moreInfoBtn.addEventListener('click', () => {
+  const expandedInfo = document.getElementById('expanded-info');
+  expandedInfo.style.display = expandedInfo.style.display === 'none' ? 'flex' : 'none';
+  moreInfoBtn.textContent = expandedInfo.style.display === 'none' ? 'More Info' : 'Less Info';
+  fetchMovieDetails(movieTitle); // Call function to fetch details on button click
+});
+}
+
+async function fetchMovieDetails(movieTitle) {
+  const response = await fetch(`https://api.example.com/movies/${movieTitle}`);
+  const data = await response.json();
+
+  // Extract movie description and trailer link from data
+  const description = data.description;
+  const trailerLink = data.trailer_url || '#'; // Handle missing trailer links
+
+  // Update elements in the expanded info section (explained later)
+    document.getElementById('expanded-info').querySelector('h3').textContent = movieTitle;
+    document.getElementById('movie-description').textContent = description;
+    document.getElementById('trailer-link').href = trailerLink;
 }
 
 // Spin the wheel and show pop-up
@@ -175,3 +210,4 @@ document.getElementById('toggle-genre-filter').addEventListener('click', functio
 
 // Apply filters
 document.getElementById('apply-filters').addEventListener('click', displayMoviesInWheel);
+
