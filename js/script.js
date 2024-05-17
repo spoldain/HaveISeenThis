@@ -125,36 +125,31 @@ document.getElementById('spin-button').addEventListener('click', async function(
         const progress = Math.min(elapsed / duration, 1);
 
         // Calculate the current index of the movie poster
-        const currentIndex = Math.floor(progress * progress * (numPosters * 10) % numPosters);
+        const currentIndex = Math.floor((progress * numPosters) % numPosters);
 
-        // Hide the last displayed poster and show the current one
-        moviePosters[lastPosterIndex].style.display = 'none';
-        moviePosters[currentIndex].style.display = 'block';
+        // If the index has changed, update the displayed poster
+        if (currentIndex !== lastPosterIndex) {
+            lastPosterIndex = currentIndex;
+            moviePosters.forEach((poster, index) => {
+                poster.style.display = index === currentIndex ? 'block' : 'none';
+            });
+        }
 
-        // Update the last poster index
-        lastPosterIndex = currentIndex;
-
-        // If the animation is not complete, request the next frame
-        if (progress < 1) {
+        // If not reached the end of the duration, continue spinning
+        if (elapsed < duration) {
             requestAnimationFrame(animateSpin);
         } else {
-            // Show the movie title when the spinning stops
-            const selectedMoviePoster = moviePosters[currentIndex];
-            const movieTitle = document.getElementById('movie-title');
-            movieTitle.textContent = selectedMoviePoster.alt;
-
-            // Show the pop-up with movie details
-            showPopup(selectedMoviePoster);
+            // Animation finished, show the selected movie
+            const selectedPoster = moviePosters[lastPosterIndex];
+            showPopup(selectedPoster);
         }
     }
-
-    // Initialize all posters as hidden
-    moviePosters.forEach(poster => poster.style.display = 'none');
 
     // Start the animation
     requestAnimationFrame(animateSpin);
 });
 
+// Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     const popupContainer = document.createElement('div');
     popupContainer.classList.add('popup');
@@ -162,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     populateYearDropdowns(); // Populate the year dropdowns
     populateGenreFilter(); // Populate the genre filter
-    displayMovies(); // Populate the movie display
+    displayMovies(); // Display movies initially
 });
 
 // Toggle genre filter visibility
