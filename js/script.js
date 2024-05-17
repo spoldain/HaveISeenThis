@@ -1,99 +1,127 @@
+window.history.scrollRestoration = 'manual';
+
 import { apiKey } from './apikey.js';
 
-let spinning = false;
-
-// Function to generate a range of years dynamically
-function generateYears() {
-    const startYear = 1900;
-    const currentYear = new Date().getFullYear();
-    const years = [];
-
-    for (let year = startYear; year <= currentYear; year++) {
-        years.push(year);
-    }
-
-    return years;
-}
-
-// Fetch genres from TMDB API
+// Fetch genres from the MovieDB API
 async function fetchGenres() {
-    const genreResponse = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`);
-    const genreData = await genreResponse.json();
-    return genreData.genres;
+    const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`);
+    const data = await response.json();
+    return data.genres;
 }
 
-function populateFilterOptions(genres, years) {
-    const yearFilter = document.getElementById('year-filter');
-    const genreFilter = document.getElementById('genre-filter');
+// Populate the genre filter with options
+async function populateGenreFilter() {
+  const genres = await fetchGenres();
+  const genreFilter = document.getElementById('genre-filter');
 
-    years.forEach(year => {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = year;
-        checkbox.id = `year-${year}`;
-        const label = document.createElement('label');
-        label.htmlFor = `year-${year}`;
-        label.textContent = year;
-        yearFilter.appendChild(checkbox);
-        yearFilter.appendChild(label);
-    });
+  genres.forEach(genre => {
+    const genreItem = document.createElement('div');
+    genreItem.classList.add('genre-item');
 
-    genres.forEach(genre => {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = genre.id;
-        checkbox.id = `genre-${genre.id}`;
-        const label = document.createElement('label');
-        label.htmlFor = `genre-${genre.id}`;
-        label.textContent = genre.name;
-        genreFilter.appendChild(checkbox);
-        genreFilter.appendChild(label);
-    });
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `genre-${genre.id}`;
+    checkbox.value = genre.id;
+
+    const label = document.createElement('label');
+    label.for = checkbox.id;
+    label.textContent = genre.name;
+
+    genreItem.appendChild(checkbox);
+    genreItem.appendChild(label);
+
+    genreFilter.appendChild(genreItem);
+  });
 }
 
-function getSelectedFilters() {
-    const selectedYears = Array.from(document.querySelectorAll('#year-filter input:checked')).map(input => input.value);
-    const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
-    return { selectedYears, selectedGenres };
+// Populate the year dropdowns with options
+function populateYearDropdowns() {
+    const yearFromSelect = document.getElementById('year-from');
+    const yearToSelect = document.getElementById('year-to');
+    const currentYear = new Date().getFullYear();
+
+    // Add default option for both dropdowns
+    const defaultOption = document.createElement('option');
+    defaultOption.text = '--';
+    defaultOption.value = '';
+    yearFromSelect.add(defaultOption);
+    yearToSelect.add(defaultOption.cloneNode(true));
+
+    // Populate the options for selecting years
+    for (let year = currentYear; year >= 1900; year--) {
+        const option = document.createElement('option');
+        option.text = year;
+        option.value = year;
+        yearFromSelect.add(option);
+        yearToSelect.add(option.cloneNode(true));
+    }
 }
 
-function fetchFilteredMovies(selectedYears, selectedGenres) {
-    const yearQuery = selectedYears.length ? `&primary_release_year=${selectedYears.join('|')}` : '';
+// Fetch movies based on filters
+async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const randomPage = Math.floor(Math.random() * 500) + 1; // Random page number between 1 and 500
-
-    return fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&page=${randomPage}${yearQuery}${genreQuery}`)
-        .then(response => response.json())
-        .then(data => data.results.slice(0, 100));
+    const numVisibleMovies = 5;
+  const numMoviesToFetch = numVisibleMovies * 5; 
+    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31${genreQuery}`);
+    const data = await response.json();
+    return data.results;
 }
 
-function displayMoviesInWheel(movies) {
+// Fetch and display movies in the wheel
+async function displayMoviesInWheel() {
+    const yearFrom = document.getElementById('year-from').value;
+    const yearTo = document.getElementById('year-to').value;
+    const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
+    const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres);
+
     const wheel = document.querySelector('.wheel');
-    wheel.innerHTML = ''; // Clear previous movies
+    wheel.innerHTML = ''; // Clear the wheel
 
     movies.forEach(movie => {
         const movieItem = document.createElement('div');
         movieItem.classList.add('wheel-item');
+        movieItem.innerHTML = `
+            <div class="loading-placeholder">Loading...</div>
+            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" style="display: none;">
+        `;
 
-        const image = new Image();
-        image.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-        image.alt = movie.title;
-        image.classList.add('movie-poster');
-        image.onload = () => {
-            movieItem.removeChild(loadingPlaceholder); // Remove loading placeholder when image loads
+        const img = movieItem.querySelector('img');
+        img.onload = () => {
+            movieItem.querySelector('.loading-placeholder').style.display = 'none';
+            img.style.display = 'block';
         };
 
-        const loadingPlaceholder = document.createElement('div');
-        loadingPlaceholder.classList.add('loading-placeholder');
-        loadingPlaceholder.textContent = 'Loading...';
-
-        movieItem.appendChild(image);
-        movieItem.appendChild(loadingPlaceholder);
         wheel.appendChild(movieItem);
+        console.log("added movie:", movie.title);
     });
 }
 
-function spinWheel() {
+// Show pop-up with movie details
+function showPopup(movieItem) {
+    const popup = document.querySelector('.popup');
+    const movieTitle = movieItem.querySelector('img').alt;
+    const moviePoster = movieItem.querySelector('img').src;
+
+    popup.innerHTML = `
+        <h2>${movieTitle}</h2>
+        <img src="${moviePoster}" alt="${movieTitle}">
+        <button id="close-popup">Close</button>
+    `;
+
+    popup.style.display = 'flex';
+
+    document.getElementById('close-popup').addEventListener('click', function() {
+        popup.style.display = 'none';
+    });
+}
+
+// Spin the wheel and show pop-up
+document.getElementById('spin-button').addEventListener('click', async function(event) {
+
+    event.preventDefault(); // Add this line to prevent the default action
+
+    await displayMoviesInWheel(); // Fetch new movies on each spin
+
     const wheel = document.querySelector('.wheel');
     const wheelItems = document.querySelectorAll('.wheel-item');
     const itemWidth = wheelItems[0].offsetWidth;
@@ -105,58 +133,45 @@ function spinWheel() {
     // Calculate the final position
     const finalPosition = spins * itemWidth;
 
-    wheel.style.transition = 'transform 5s ease-out';
+    // Set the transform property to spin the wheel
+    wheel.style.transition = 'transform 4s ease-out';
     wheel.style.transform = `translateX(-${finalPosition}px)`;
 
-    // Reset after the spin completes
+    // Detect when spinning stops
+    setTimeout(() => {
+        // Calculate the movie under the indicator
+        const finalIndex = (spins % numItems);
+        const selectedMovie = wheelItems[finalIndex];
+
+        // Show the pop-up with movie details
+        showPopup(selectedMovie);
+    }, 4000); // Match this time with the transition duration
+
+    // Reset the position after spin
     setTimeout(() => {
         wheel.style.transition = 'none';
-        wheel.style.transform = 'translateX(0)';
-
-        // Move items that are out of view back to the end
-        for (let i = 0; i < spins; i++) {
-            wheel.appendChild(wheel.firstElementChild);
-        }
-
-        // Allow new spins
-        spinning = false;
-    }, 5000); // Match the duration with the transition
-}
-
-document.addEventListener('DOMContentLoaded', async function () {
-    const genres = await fetchGenres();
-    const years = generateYears();
-    populateFilterOptions(genres, years);
-
-    document.getElementById('spin-button').addEventListener('click', function () {
-        if (spinning) {
-            return; // Prevent further spins while already spinning
-        }
-
-        spinning = true; // Set spinning to true to indicate that the wheel is spinning
-
-        const { selectedYears, selectedGenres } = getSelectedFilters();
-
-        fetchFilteredMovies(selectedYears, selectedGenres).then(movies => {
-            displayMoviesInWheel(movies);
-            spinWheel();
-        });
-    });
-
-    document.getElementById('apply-filters').addEventListener('click', function () {
-        if (spinning) {
-            return; // Prevent applying filters while already spinning
-        }
-
-        const { selectedYears, selectedGenres } = getSelectedFilters();
-
-        fetchFilteredMovies(selectedYears, selectedGenres).then(movies => {
-            displayMoviesInWheel(movies);
-        });
-    });
-
-    // Initial fetch and display movies
-    fetchFilteredMovies([], []).then(movies => {
-        displayMoviesInWheel(movies);
-    });
+        wheel.style.transform = `translateX(-${(finalPosition % (numItems * itemWidth))}px)`;
+        setTimeout(() => {
+            wheel.style.transition = 'transform 4s ease-out';
+        }, 50);
+    }, 4500); // Slightly more than the spinning duration
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const popupContainer = document.createElement('div');
+    popupContainer.classList.add('popup');
+    document.body.appendChild(popupContainer);
+
+    populateYearDropdowns(); // Populate the year dropdowns
+    populateGenreFilter(); // Populate the genre filter
+    displayMoviesInWheel(); // Populate the wheel container
+});
+
+// Toggle genre filter visibility
+document.getElementById('toggle-genre-filter').addEventListener('click', function() {
+    const genreFilter = document.getElementById('genre-filter');
+    genreFilter.style.display = genreFilter.style.display === 'none' ? 'flex' : 'none';
+});
+
+// Apply filters
+document.getElementById('apply-filters').addEventListener('click', displayMoviesInWheel);

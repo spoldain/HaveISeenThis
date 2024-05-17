@@ -12,7 +12,9 @@ body {
     flex-direction: column;
     align-items: center;
     margin: 20px;
-    background-color: #2d0a30;
+    background-image: linear-gradient(180deg, #2d0a30, #57005f, #2d0a30);
+    background-size: cover; /* Ensure the gradient covers the full height */
+    background-repeat: no-repeat; /* Prevent the gradient from repeating */
     color: white;
     overflow-x: hidden;
 }
@@ -35,20 +37,97 @@ body {
     text-align: center;
 }
 
+#filter-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#year-filter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#year-filter label, #year-filter select {
+    margin: 0 5px;
+}
+
+#genre-filter-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    box-align: center;
+}
+
+#toggle-genre-filter {
+    background-color: #391878;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+#toggle-genre-filter:hover {
+    background-color: #493273;
+}
+
+#genre-filter {
+    align-content: center;
+    width: 40%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    margin: 0 auto;
+}
+
+#genre-filter input[type="checkbox"] {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+#genre-filter label {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#genre-filter input {
+    margin-right: 5px;
+}
+
+#apply-filters {
+    background-color: #391878;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+#apply-filters:hover {
+    background-color: #493273;
+}
+
 #spinwheel-section {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
-    margin: 20px;
+    width: 100%;
 }
 
 .wheel-container {
     position: relative;
     width: 90%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     background-color: rgba(0, 0, 0, 0.15);
     margin-bottom: 20px;
 }
@@ -56,6 +135,7 @@ body {
 .wheel {
     display: flex;
     transition: transform 1s ease-out;
+    width: max-content;
 }
 
 .wheel-item {
@@ -89,88 +169,82 @@ body {
     color: #888;
 }
 
-.indicator {
-    position: relative;
+.indicator-line {
+    position: absolute;
     width: 7px;
-    height: 389px;
+    height: calc(100% - 17%); /* Adjust height to match wheel container minus margin */
     background-color: white;
     border-radius: 50%;
-    bottom: 379px;
+    top: 20px; /* Adjust to match margin */
     left: 50%;
     transform: translateX(-50%);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    pointer-events: none; /* So it doesn't interfere with click events */
 }
 
 #spin-button {
+    font-family: "Montserrat";
     position: relative;
     bottom: -20px;
     width: fit-content;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 35px;
+    text-align: center;
     text-transform: uppercase;
-    font-weight: bold;
+    transition: 0.5s;
     cursor: pointer;
-    background-color: #391878;
+    background-size: 200% auto;
+    background-image: linear-gradient(to right, #DA22FF 0%, #9733EE 51%, #DA22FF 100%);
     color: white;
     border: none;
-    border-radius: 4px;
-    margin: 0 auto;
+    border-radius: 20px;
+    margin-bottom: 50px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: block;
+    margin: 10px;
 }
 
 #spin-button:hover {
-    background-color: #493273;
+    background-position: right center;
+    color: #fff;
+    text-decoration: none;
 }
 
-.filter-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
-.filter-dropdown {
-    position: relative;
-    margin: 0 10px;
+.popup img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }
 
-.dropdown-button {
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
+.popup button {
+    margin-top: 20px;
+    padding: 10px 20px;
     background-color: #391878;
     color: white;
     border: none;
     border-radius: 4px;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    z-index: 1;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.dropdown-content label {
-    display: block;
-    margin: 5px 0;
-    color: #000;
-}
-
-.filter-dropdown:hover .dropdown-content {
-    display: block;
-}
-
-#apply-filters {
-    padding: 10px 20px;
-    font-size: 16px;
-    text-transform: uppercase;
-    font-weight: bold;
     cursor: pointer;
+}
+
+.popup button:hover {
     background-color: #493273;
-    color: white;
-    border: none;
-    border-radius: 4px;
 }

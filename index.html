@@ -14,30 +14,28 @@
 
 <h1 class="website-title">Spin the wheel to find out what to watch next!</h1>
 
- <section id="filter-section">
-        <div class="filter-container">
-            <div class="filter-dropdown">
-                <button class="dropdown-button">Filter by Year</button>
-                <div class="dropdown-content" id="year-filter">
-                    <!-- Year checkboxes will be dynamically added here -->
-                </div>
-            </div>
-            <div class="filter-dropdown">
-                <button class="dropdown-button">Filter by Genre</button>
-                <div class="dropdown-content" id="genre-filter">
-                    <!-- Genre checkboxes will be dynamically added here -->
-                </div>
-            </div>
-            <button id="apply-filters">Apply Filters</button>
-        </div>
-    </section>
+<section id="filter-section">
+    <div id="year-filter">
+        <label for="year-from">Year From:</label>
+        <select id="year-from"></select>
+        <label for="year-to">Year To:</label>
+        <select id="year-to"></select>
+    </div>
+    <div id="genre-filter-container">
+        <button id="toggle-genre-filter">Toggle Genre Filter</button>
+        <div id="genre-filter"></div>
+    </div>
+    <button id="apply-filters">Apply Filters</button>
+</section>
 
 <section id="spinwheel-section">
-    <div class="wheel-container">
-        <div class="wheel">
-            <!-- Movie posters will be dynamically added here -->
+    <div class="main-frame"> <!-- Add the main frame here -->
+        <div class="wheel-container">
+            <div class="wheel">
+                <!-- Movie posters will be dynamically added here -->
+            </div>
         </div>
-        <div class="indicator"></div> <!-- Add the indicator here -->
+        <div class="indicator-line"></div> <!-- Add the indicator line here -->
     </div>
     <button id="spin-button">Spin</button>
 </section>
