@@ -1,7 +1,3 @@
-/* styles.css */
-
-@import url("https://fonts.googleapis.com/css?family=Lato");
-
 * {
     margin: 0;
     padding: 0;
@@ -47,87 +43,19 @@ body {
 }
 
 #year-filter {
-    position: relative;
-    display: inline-block;
+    display: flex;
+    align-items: center;
     margin-bottom: 10px;
 }
 
-#year-filter label,
-#year-filter select {
+#year-filter label, #year-filter select {
     margin: 0 5px;
 }
-
-/* Dropdown menu styles */
-.select-hidden {
-    display: none;
-    visibility: hidden;
-    padding-right: 10px;
-}
-
-.select {
-    cursor: pointer;
-    display: inline-block;
-    position: relative;
-    font-size: 16px;
-    color: white;
-    width: 120px;
-    height: 40px;
-    background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 20px;
-}
-
-.select-styled {
-    padding: 8px 15px;
-    position: relative;
-    z-index: 1;
-}
-
-.select-styled:after {
-    content: "";
-    width: 0;
-    height: 0;
-    border: 7px solid transparent;
-    border-color: white transparent transparent transparent;
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-}
-
-.select-options {
-    display: none;
-    position: absolute;
-    top: calc(100% + 5px);
-    left: 0;
-    right: 0;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.select-options li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.select-options li:hover,
-.select-options li.is-selected {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.select.open .select-options {
-    display: block;
-}
-
-/* End of Dropdown menu styles */
 
 #genre-filter-container {
     width: 100%;
     text-align: center;
     margin-bottom: 10px;
-    box-align: center;
 }
 
 #toggle-genre-filter {
@@ -145,29 +73,17 @@ body {
 }
 
 #genre-filter {
-    align-content: center;
-    width: 40%;
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     justify-content: center;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 20px;
-    margin: 0 auto;
+    border-radius: 4px;
 }
 
 #genre-filter input[type="checkbox"] {
     margin-right: 10px;
     margin-left: 10px;
-}
-
-#genre-filter label {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-#genre-filter input {
-    margin-right: 5px;
 }
 
 #apply-filters {
@@ -184,8 +100,7 @@ body {
     background-color: #493273;
 }
 
-#spinwheel-section {
-    position: relative;
+#movie-box-section {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -193,103 +108,54 @@ body {
     width: 100%;
 }
 
-.wheel-container {
-    display: none;
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-}
-
-.wheel {
+.movie-box {
     display: flex;
-    transition: transform 5s ease-out;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.5);
 }
 
-.wheel-item {
-    width: 100px;
-    flex-shrink: 0;
-}
-
-.wheel-item img {
-    max-width: 95%;
-    max-height: 95%;
-    border-radius: 8px;
-    box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.5);
-}
-
-.loading-placeholder {
+.movie-poster-container {
+    width: 240px;
+    height: 350px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
-    background-color: #f0f0f0;
-    color: #888;
-}
-
-#spin-button {
-    font-family: "Montserrat";
-    width: fit-content;
-    padding: 10px 20px;
-    font-size: 35px;
-    text-align: center;
-    text-transform: uppercase;
-    transition: 0.5s;
-    cursor: pointer;
-    background-size: 200% auto;
-    background-image: linear-gradient(to right, #DA22FF 0%, #9733EE 51%, #DA22FF 100%);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    margin-bottom: 50px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    display: block;
-    margin: 10px;
-}
-
-#spin-button:hover {
-    background-position: right center;
-    color: #fff;
-    text-decoration: none;
-}
-
-.popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.popup img {
-    max-width: 100%;
-    border-radius: 8px;
+    background-color: #333333;
+    border: 2px solid #333333;
+    border-radius: 10px;
+    overflow: hidden;
     margin-bottom: 10px;
 }
 
-.popup button {
+.movie-poster-container img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+}
+
+#movie-title {
+    margin-top: 10px;
+    font-size: 24px;
+    text-align: center;
+}
+
+#spin-button {
     margin-top: 20px;
     padding: 10px 20px;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
     background-color: #391878;
     color: white;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
 }
 
-.popup button:hover {
+#spin-button:hover {
     background-color: #493273;
-}
-
-#more-info-btn {
-    display: block;
-    margin-top: 10px;
-}
-
-#expanded-info {
-    display: none;
-    margin-top: 10px;
 }
