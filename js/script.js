@@ -64,7 +64,7 @@ async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
     return data.results;
 }
 
-// Display movie poster and title
+// Display movie posters and title
 async function displayMovies() {
     const yearFrom = document.getElementById('year-from').value;
     const yearTo = document.getElementById('year-to').value;
@@ -76,15 +76,31 @@ async function displayMovies() {
         return;
     }
 
-    const moviePoster = document.getElementById('current-movie-poster');
+    const currentPoster = document.getElementById('current-movie-poster');
+    const leftPoster = document.getElementById('left-movie-poster');
+    const rightPoster = document.getElementById('right-movie-poster');
+    const leftmostPoster = document.getElementById('leftmost-movie-poster');
+    const rightmostPoster = document.getElementById('rightmost-movie-poster');
     const movieTitle = document.getElementById('movie-title');
 
     let currentIndex = 0;
 
     function showMovie(index) {
-        moviePoster.src = `https://image.tmdb.org/t/p/w500${movies[index].poster_path}`;
-        moviePoster.alt = movies[index].title;
+        currentPoster.src = `https://image.tmdb.org/t/p/w500${movies[index].poster_path}`;
+        currentPoster.alt = movies[index].title;
         movieTitle.textContent = movies[index].title;
+
+        leftPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index - 1 + movies.length) % movies.length].poster_path}`;
+        leftPoster.alt = movies[(index - 1 + movies.length) % movies.length].title;
+
+        rightPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index + 1) % movies.length].poster_path}`;
+        rightPoster.alt = movies[(index + 1) % movies.length].title;
+
+        leftmostPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index - 2 + movies.length) % movies.length].poster_path}`;
+        leftmostPoster.alt = movies[(index - 2 + movies.length) % movies.length].title;
+
+        rightmostPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index + 2) % movies.length].poster_path}`;
+        rightmostPoster.alt = movies[(index + 2) % movies.length].title;
     }
 
     let intervalId;
@@ -93,8 +109,8 @@ async function displayMovies() {
     function spinMovies() {
         clearInterval(intervalId);
         intervalId = setInterval(() => {
-            showMovie(currentIndex);
             currentIndex = (currentIndex + 1) % movies.length;
+            showMovie(currentIndex);
         }, interval);
     }
 
