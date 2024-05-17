@@ -24,7 +24,7 @@ async function populateGenreFilter() {
         checkbox.value = genre.id;
 
         const label = document.createElement('label');
-        label.for = checkbox.id;
+        label.htmlFor = checkbox.id;
         label.textContent = genre.name;
 
         genreItem.appendChild(checkbox);
@@ -60,84 +60,48 @@ function populateYearDropdowns() {
 // Fetch movies based on filters
 async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const yearQuery = (yearFrom && yearTo) ? `&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31` : '';
-    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false${yearQuery}${genreQuery}`);
+    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31${genreQuery}`);
     const data = await response.json();
     return data.results;
 }
 
-// Fetch and display movies in the box
+// Display movies in the container
 async function displayMovies() {
     const yearFrom = document.getElementById('year-from').value;
     const yearTo = document.getElementById('year-to').value;
     const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
     const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres);
 
-    const movieDisplay = document.querySelector('.movie-display');
-    movieDisplay.innerHTML = ''; // Clear the display
+    const movieContainer = document.querySelector('.movie-container');
+    movieContainer.innerHTML = ''; // Clear the container
 
     movies.forEach(movie => {
-        const img = document.createElement('img');
-        img.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-        img.alt = movie.title;
-        img.classList.add('movie-poster');
-        movieDisplay.appendChild(img);
+        const movieItem = document.createElement('div');
+        movieItem.classList.add('movie-item');
+        movieItem.innerHTML = `
+            <div class="loading-placeholder">Loading...</div>
+            <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" style="display: none;">
+        `;
+
+        const img = movieItem.querySelector('img');
+        img.onload = () => {
+            movieItem.querySelector('.loading-placeholder').style.display = 'none';
+            img.style.display = 'block';
+        };
+
+        movieContainer.appendChild(movieItem);
     });
 }
 
-// Spin the posters and gradually slow down
-document.getElementById('spin-button').addEventListener('click', async function(event) {
-    event.preventDefault(); // Prevent the default action
-
-    await displayMovies(); // Fetch new movies on each spin
-
-    const moviePosters = document.querySelectorAll('.movie-poster');
-    const numPosters = moviePosters.length;
-    let startTime;
-    let duration = 5000; // Total duration of the spin in milliseconds
-    let lastPosterIndex = 0;
-
-    function animateSpin(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-
-        // Calculate the progress (from 0 to 1)
-        const progress = Math.min(elapsed / duration, 1);
-
-        // Calculate the current index of the movie poster
-        const currentIndex = Math.floor((progress * numPosters) % numPosters);
-
-        // If the index has changed, update the displayed poster
-        if (currentIndex !== lastPosterIndex) {
-            lastPosterIndex = currentIndex;
-            moviePosters.forEach((poster, index) => {
-                poster.style.display = index === currentIndex ? 'block' : 'none';
-            });
-        }
-
-        // If not reached the end of the duration, continue spinning
-        if (elapsed < duration) {
-            requestAnimationFrame(animateSpin);
-        } else {
-            // Animation finished, show the selected movie
-            const selectedPoster = moviePosters[lastPosterIndex];
-            showPopup(selectedPoster);
-        }
-    }
-
-    // Start the animation
-    requestAnimationFrame(animateSpin);
-});
-
 // Show pop-up with movie details
-function showPopup(moviePoster) {
+function showPopup(movieItem) {
     const popup = document.querySelector('.popup');
-    const movieTitle = moviePoster.alt;
-    const moviePosterSrc = moviePoster.src;
+    const movieTitle = movieItem.querySelector('img').alt;
+    const moviePoster = movieItem.querySelector('img').src;
 
     popup.innerHTML = `
         <h2>${movieTitle}</h2>
-        <img src="${moviePosterSrc}" alt="${movieTitle}">
+        <img src="${moviePoster}" alt="${movieTitle}">
         <button id="close-popup">Close</button>
     `;
 
@@ -148,6 +112,49 @@ function showPopup(moviePoster) {
     });
 }
 
+// Spin the movie posters
+document.getElementById('spin-button').addEventListener('click', async function(event) {
+    event.preventDefault();
+
+    await displayMovies(); // Fetch new movies on each spin
+
+    const movieContainer = document.querySelector('.movie-container');
+    const movieItems = document.querySelectorAll('.movie-item');
+    const numItems = movieItems.length;
+    let currentIndex = 0;
+
+    // Function to animate the spin
+    function animateSpin(duration) {
+        const startTime = performance.now();
+
+        function spin(time) {
+            const elapsed = time - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeOutQuart(progress);
+
+            currentIndex = Math.floor(easedProgress * numItems);
+
+            movieItems.forEach((item, index) => {
+                item.style.display = index === currentIndex ? 'block' : 'none';
+            });
+
+            if (progress < 1) {
+                requestAnimationFrame(spin);
+            } else {
+                showPopup(movieItems[currentIndex]);
+            }
+        }
+
+        requestAnimationFrame(spin);
+    }
+
+    // Easing function for smooth animation
+    function easeOutQuart(x) {
+        return 1 - Math.pow(1 - x, 4);
+    }
+
+    animateSpin(5000); // 5 seconds duration
+});
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
