@@ -24,7 +24,7 @@ async function populateGenreFilter() {
         checkbox.value = genre.id;
 
         const label = document.createElement('label');
-        label.htmlFor = checkbox.id;
+        label.for = checkbox.id;
         label.textContent = genre.name;
 
         genreItem.appendChild(checkbox);
@@ -40,12 +40,14 @@ function populateYearDropdowns() {
     const yearToSelect = document.getElementById('year-to');
     const currentYear = new Date().getFullYear();
 
+    // Add default option for both dropdowns
     const defaultOption = document.createElement('option');
     defaultOption.text = '--';
     defaultOption.value = '';
     yearFromSelect.add(defaultOption);
     yearToSelect.add(defaultOption.cloneNode(true));
 
+    // Populate the options for selecting years
     for (let year = currentYear; year >= 1900; year--) {
         const option = document.createElement('option');
         option.text = year;
@@ -58,99 +60,113 @@ function populateYearDropdowns() {
 // Fetch movies based on filters
 async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const yearQuery = (yearFrom && yearTo) ? `&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31` : '';
-    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false${yearQuery}${genreQuery}`);
+    const numVisibleMovies = 5;
+    const numMoviesToFetch = numVisibleMovies * 5;
+    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31${genreQuery}`);
     const data = await response.json();
     return data.results;
 }
 
-// Display movie poster and title
+// Fetch and display movies in the box
 async function displayMovies() {
     const yearFrom = document.getElementById('year-from').value;
     const yearTo = document.getElementById('year-to').value;
     const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
     const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres);
 
-    if (movies.length === 0) {
-        alert('No movies found with the selected filters.');
-        return;
-    }
+    const movieDisplay = document.querySelector('.movie-display');
+    movieDisplay.innerHTML = ''; // Clear the display
 
-    const moviePoster = document.getElementById('current-movie-poster');
-    const movieTitle = document.getElementById('movie-title');
-
-    let currentIndex = 0;
-
-    function showMovie(index) {
-        moviePoster.src = `https://image.tmdb.org/t/p/w500${movies[index].poster_path}`;
-        moviePoster.alt = movies[index].title;
-        movieTitle.textContent = movies[index].title;
-    }
-
-    let intervalId;
-    let interval = 100;
-
-    function spinMovies() {
-        clearInterval(intervalId);
-        intervalId = setInterval(() => {
-            showMovie(currentIndex);
-            currentIndex = (currentIndex + 1) % movies.length;
-        }, interval);
-    }
-
-    document.getElementById('spin-button').addEventListener('click', function () {
-        currentIndex = 0;
-        interval = 100;
-        spinMovies();
-
-        setTimeout(() => {
-            clearInterval(intervalId);
-            let slowdownIntervalId = setInterval(() => {
-                if (interval < 1000) {
-                    interval += 100;
-                    spinMovies();
-                } else {
-                    clearInterval(slowdownIntervalId);
-                }
-            }, 500);
-        }, 2000);
+    movies.forEach(movie => {
+        const img = document.createElement('img');
+        img.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        img.alt = movie.title;
+        img.classList.add('movie-poster');
+        movieDisplay.appendChild(img);
     });
-
-    showMovie(currentIndex);
 }
 
 // Show pop-up with movie details
-function showPopup(movie) {
+function showPopup(moviePoster) {
     const popup = document.querySelector('.popup');
-    const movieTitle = movie.title;
-    const moviePoster = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+    const movieTitle = moviePoster.alt;
+    const moviePosterSrc = moviePoster.src;
 
     popup.innerHTML = `
         <h2>${movieTitle}</h2>
-        <img src="${moviePoster}" alt="${movieTitle}">
+        <img src="${moviePosterSrc}" alt="${movieTitle}">
         <button id="close-popup">Close</button>
     `;
 
     popup.style.display = 'flex';
 
-    document.getElementById('close-popup').addEventListener('click', function () {
+    document.getElementById('close-popup').addEventListener('click', function() {
         popup.style.display = 'none';
     });
 }
 
-// Initial setup
-document.addEventListener('DOMContentLoaded', function () {
+// Spin the posters and gradually slow down
+document.getElementById('spin-button').addEventListener('click', async function(event) {
+    event.preventDefault(); // Prevent the default action
+
+    await displayMovies(); // Fetch new movies on each spin
+
+    const moviePosters = document.querySelectorAll('.movie-poster');
+    const numPosters = moviePosters.length;
+    let startTime;
+    let duration = 5000; // Total duration of the spin in milliseconds
+    let lastPosterIndex = 0;
+
+    function animateSpin(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+
+        // Calculate the progress (from 0 to 1)
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Calculate the current index of the movie poster
+        const currentIndex = Math.floor(progress * progress * (numPosters * 10) % numPosters);
+
+        // Hide the last displayed poster and show the current one
+        moviePosters[lastPosterIndex].style.display = 'none';
+        moviePosters[currentIndex].style.display = 'block';
+
+        // Update the last poster index
+        lastPosterIndex = currentIndex;
+
+        // If the animation is not complete, request the next frame
+        if (progress < 1) {
+            requestAnimationFrame(animateSpin);
+        } else {
+            // Show the movie title when the spinning stops
+            const selectedMoviePoster = moviePosters[currentIndex];
+            const movieTitle = document.getElementById('movie-title');
+            movieTitle.textContent = selectedMoviePoster.alt;
+
+            // Show the pop-up with movie details
+            showPopup(selectedMoviePoster);
+        }
+    }
+
+    // Initialize all posters as hidden
+    moviePosters.forEach(poster => poster.style.display = 'none');
+
+    // Start the animation
+    requestAnimationFrame(animateSpin);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
     const popupContainer = document.createElement('div');
     popupContainer.classList.add('popup');
     document.body.appendChild(popupContainer);
 
-    populateYearDropdowns();
-    populateGenreFilter();
-    displayMovies();
+    populateYearDropdowns(); // Populate the year dropdowns
+    populateGenreFilter(); // Populate the genre filter
+    displayMovies(); // Populate the movie display
 });
 
 // Toggle genre filter visibility
-document.getElementById('toggle-genre-filter').addEventListener('click', function () {
+document.getElementById('toggle-genre-filter').addEventListener('click', function() {
     const genreFilter = document.getElementById('genre-filter');
     genreFilter.style.display = genreFilter.style.display === 'none' ? 'flex' : 'none';
 });
