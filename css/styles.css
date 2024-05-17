@@ -19,183 +19,81 @@ body {
     overflow-x: hidden;
 }
 
-.logo1 {
-    max-width: 15%;
+.logo {
+    width: 100px;
     height: auto;
-}
-
-.website-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 35px;
-    font-weight: bold;
-    text-transform: uppercase;
     margin-bottom: 20px;
-    text-shadow: 3px 0 7px rgba(0, 0, 0, 0.5);
-    background-color: rgba(0, 0, 0, 0.25);
-    border-radius: 10px;
-    margin-top: 20px;
-    text-align: center;
-    padding: 10px 20px; /* Added padding for better readability */
 }
 
-#filter-section {
+.filter-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
 }
 
-#year-filter {
+.genre-filter,
+.year-filter {
     display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-#year-filter label, #year-filter select {
-    margin: 0 5px;
-}
-
-#genre-filter-container {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#toggle-genre-filter {
-    background-color: #391878;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-bottom: 10px;
-}
-
-#toggle-genre-filter:hover {
-    background-color: #493273;
-}
-
-#genre-filter {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 20px;
-    display: none; /* Initially hidden, toggled by button */
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px;
 }
 
 .genre-item {
-    margin: 5px 10px;
-}
-
-#genre-filter input[type="checkbox"] {
-    margin-right: 10px;
-    margin-left: 10px;
-}
-
-#genre-filter label {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-#apply-filters {
-    background-color: #391878;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-top: 10px;
-}
-
-#apply-filters:hover {
-    background-color: #493273;
-}
-
-#movie-section {
-    position: relative;
+    margin: 5px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin-top: 20px;
-    width: 100%;
 }
 
-.movie-container {
+.genre-item input {
+    margin-right: 5px;
+}
+
+#wheel-container {
     position: relative;
-    width: 90%;
-    display: flex;
+    width: 300px;
+    height: 300px;
     overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.15);
-    margin-bottom: 20px;
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
     justify-content: center;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
-.movie-item {
-    min-width: 240px;
-    min-height: 350px;
-    margin: 10px;
-    background-color: #333333;
-    border: 2px solid #333333;
+.wheel {
+    display: flex;
+    transition: transform 5s ease-out;
+}
+
+.wheel-item {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.wheel-item img {
+    width: 80%;
+    height: auto;
     border-radius: 10px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    position: relative;
-}
-
-.movie-item img {
-    max-width: 95%;
-    max-height: 95%;
-    border-radius: 8px;
-    box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.5);
 }
 
 .loading-placeholder {
+    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-    background-color: #f0f0f0;
-    color: #888;
-}
-
-#spin-button {
-    font-family: "Montserrat";
-    position: relative;
-    bottom: -20px;
-    width: fit-content;
-    padding: 10px 20px;
-    font-size: 35px;
-    text-align: center;
-    text-transform: uppercase;
-    transition: 0.5s;
-    cursor: pointer;
-    background-size: 200% auto;
-    background-image: linear-gradient(to right, #DA22FF 0%, #9733EE 51%, #DA22FF 100%);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
-    border: none;
-    border-radius: 20px;
-    margin-bottom: 50px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    display: block;
-    margin: 10px;
-}
-
-#spin-button:hover {
-    background-position: right center;
-    color: #fff;
-    text-decoration: none;
+    font-size: 1.2em;
+    z-index: 1;
 }
 
 .popup {
@@ -204,35 +102,79 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     width: 80%;
-    max-width: 500px;
+    max-width: 600px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
     padding: 20px;
-    background-color: #ffffff;
-    color: #000000;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
     display: none;
     flex-direction: column;
     align-items: center;
-    text-align: center;
 }
 
 .popup img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
 }
 
-.popup button {
-    margin-top: 20px;
+.popup h2 {
+    margin-bottom: 20px;
+}
+
+#more-info-btn,
+#close-popup {
+    margin-top: 10px;
     padding: 10px 20px;
-    background-color: #391878;
-    color: white;
+    background-color: #57005f;
     border: none;
-    border-radius: 4px;
+    color: white;
     cursor: pointer;
+    border-radius: 5px;
 }
 
-.popup button:hover {
-    background-color: #493273;
+#more-info-btn:hover,
+#close-popup:hover {
+    background-color: #8a008a;
+}
+
+#expanded-info {
+    width: 100%;
+    text-align: center;
+}
+
+#expanded-info p {
+    margin: 10px 0;
+}
+
+#expanded-info a {
+    color: #57005f;
+    text-decoration: none;
+}
+
+#expanded-info a:hover {
+    text-decoration: underline;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #57005f;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #8a008a;
+}
+
+#spin-button {
+    font-size: 1.5em;
+}
+
+.hidden {
+    display: none;
 }
