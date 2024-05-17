@@ -35,7 +35,6 @@ body {
     border-radius: 10px;
     margin-top: 20px;
     text-align: center;
-    padding: 10px 20px; /* Added padding for better readability */
 }
 
 #filter-section {
@@ -49,6 +48,7 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    overflow-y: scroll;
 }
 
 #year-filter label, #year-filter select {
@@ -59,9 +59,7 @@ body {
     width: 100%;
     text-align: center;
     margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    box-align: center;
 }
 
 #toggle-genre-filter {
@@ -79,18 +77,15 @@ body {
 }
 
 #genre-filter {
-    width: 100%;
+    align-content: center;
+    width: 40%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 20px;
-    display: none; /* Initially hidden, toggled by button */
-}
-
-.genre-item {
-    margin: 5px 10px;
+    margin: 0 auto;
 }
 
 #genre-filter input[type="checkbox"] {
@@ -101,6 +96,10 @@ body {
 #genre-filter label {
     font-size: 14px;
     line-height: 1.5;
+}
+
+#genre-filter input {
+    margin-right: 5px;
 }
 
 #apply-filters {
@@ -117,7 +116,7 @@ body {
     background-color: #493273;
 }
 
-#movie-section {
+#spinwheel-section {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -126,21 +125,27 @@ body {
     width: 100%;
 }
 
-.movie-container {
+.wheel-container {
     position: relative;
-    width: 90%;
-    display: flex;
+    width: 300px;
+    height: 450px; /* Adjust the height as needed */
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.15);
     margin-bottom: 20px;
+    display: flex;
     justify-content: center;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
-.movie-item {
-    min-width: 240px;
-    min-height: 350px;
-    margin: 10px;
+.wheel {
+    display: flex;
+    transition: transform 5s ease-out;
+    width: 100%;
+}
+
+.wheel-item {
+    min-width: 100%;
+    min-height: 100%;
     background-color: #333333;
     border: 2px solid #333333;
     border-radius: 10px;
@@ -149,11 +154,12 @@ body {
     justify-content: center;
     align-items: center;
     box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-.movie-item img {
+.wheel-item img {
     max-width: 95%;
     max-height: 95%;
     border-radius: 8px;
@@ -172,8 +178,6 @@ body {
 
 #spin-button {
     font-family: "Montserrat";
-    position: relative;
-    bottom: -20px;
     width: fit-content;
     padding: 10px 20px;
     font-size: 35px;
