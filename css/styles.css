@@ -1,3 +1,5 @@
+/* styles.css */
+
 * {
     margin: 0;
     padding: 0;
@@ -73,17 +75,29 @@ body {
 }
 
 #genre-filter {
-    display: none;
+    align-content: center;
+    width: 40%;
+    display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
+    border-radius: 20px;
+    margin: 0 auto;
 }
 
 #genre-filter input[type="checkbox"] {
     margin-right: 10px;
     margin-left: 10px;
+}
+
+#genre-filter label {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#genre-filter input {
+    margin-right: 5px;
 }
 
 #apply-filters {
@@ -100,7 +114,8 @@ body {
     background-color: #493273;
 }
 
-#movie-box-section {
+#spinwheel-section {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -108,54 +123,100 @@ body {
     width: 100%;
 }
 
-.movie-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.movie-display {
+    position: relative;
+    width: 300px;
+    height: 450px;
+    overflow: hidden;
     background-color: rgba(0, 0, 0, 0.15);
-    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 10px;
     box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.5);
 }
 
-.movie-poster-container {
-    width: 240px;
-    height: 350px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #333333;
-    border: 2px solid #333333;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.movie-poster-container img {
+#current-movie-poster {
     max-width: 100%;
     max-height: 100%;
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.5);
 }
 
 #movie-title {
-    margin-top: 10px;
-    font-size: 24px;
+    font-size: 20px;
+    font-weight: bold;
     text-align: center;
+    margin-top: 10px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 
 #spin-button {
+    font-family: "Montserrat";
+    position: relative;
+    width: fit-content;
+    padding: 10px 20px;
+    font-size: 35px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    cursor: pointer;
+    background-size: 200% auto;
+    background-image: linear-gradient(to right, #DA22FF 0%, #9733EE 51%, #DA22FF 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    margin-bottom: 50px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: block;
+    margin: 10px;
+}
+
+#spin-button:hover {
+    background-position: right center;
+    color: #fff;
+    text-decoration: none;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.popup img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.popup button {
     margin-top: 20px;
     padding: 10px 20px;
-    font-size: 16px;
-    text-transform: uppercase;
-    font-weight: bold;
-    cursor: pointer;
     background-color: #391878;
     color: white;
     border: none;
     border-radius: 4px;
+    cursor: pointer;
 }
 
-#spin-button:hover {
+.popup button:hover {
     background-color: #493273;
 }
