@@ -146,34 +146,34 @@ body {
     transform: translateX(0);
 }
 
-.side-poster {
+.side-left-poster {
     width: 170px; /* 85% of the main poster size */
     height: 255px;
     z-index: 2;
-}
-
-.topmost-side-poster {
-    width: 145px; /* 70% of the main poster size */
-    height: 218px;
-    z-index: 1;
-}
-
-#leftmost-movie-poster-container {
-    left: 10%;
-    transform: translateX(-50%);
-}
-
-#left-movie-poster-container {
     left: 30%;
     transform: translateX(-50%);
 }
 
-#right-movie-poster-container {
+.side-right-poster {
+    width: 170px; /* 85% of the main poster size */
+    height: 255px;
+    z-index: 2;
     right: 30%;
     transform: translateX(50%);
 }
 
-#rightmost-movie-poster-container {
+.topmost-side-left-poster {
+    width: 145px; /* 70% of the main poster size */
+    height: 218px;
+    z-index: 1;
+    left: 10%;
+    transform: translateX(-50%);
+}
+
+.topmost-side-right-poster {
+    width: 145px; /* 70% of the main poster size */
+    height: 218px;
+    z-index: 1;
     right: 10%;
     transform: translateX(50%);
 }

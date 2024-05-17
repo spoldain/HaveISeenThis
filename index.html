@@ -3,54 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/images/logo/favicon.ico">
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
-    <title>Have I Seen This?</title>
+    <title>Movie Wheel</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<img src="images/logo/white-logo-1.svg" class="logo1"></img>
-
-<h1 class="website-title">Find out what to watch next!</h1>
-
-<section id="filter-section">
-    <div id="year-filter">
-        <label for="year-from">Year From:</label>
-        <select id="year-from"></select>
-        <label for="year-to">Year To:</label>
-        <select id="year-to"></select>
+    <div class="logo1">
+        <img src="logo.png" alt="Logo">
     </div>
-    <div id="genre-filter-container">
-        <button id="toggle-genre-filter">Toggle Genre Filter</button>
-        <div id="genre-filter"></div>
-    </div>
-    <button id="apply-filters">Apply Filters</button>
-</section>
+    <h1 class="website-title">Movie Wheel</h1>
 
-<section id="movie-box-section">
+    <div id="filter-section">
+        <div id="year-filter">
+            <label for="year-from">From:</label>
+            <select id="year-from"></select>
+            <label for="year-to">To:</label>
+            <select id="year-to"></select>
+        </div>
+
+        <div id="genre-filter-container">
+            <button id="toggle-genre-filter">Toggle Genre Filter</button>
+            <div id="genre-filter" style="display: none;"></div>
+        </div>
+
+        <button id="apply-filters">Apply Filters</button>
+    </div>
+
     <div class="movie-box">
-        <div class="movie-poster-container">
-            <img id="leftmost-movie-poster" src="" alt="Leftmost Movie Poster">
-        </div>
-        <div class="movie-poster-container">
-            <img id="left-movie-poster" src="" alt="Left Movie Poster">
-        </div>
         <div class="movie-poster-container main-poster">
             <img id="current-movie-poster" src="" alt="Current Movie Poster">
         </div>
-        <div class="movie-poster-container">
+        <div class="movie-poster-container side-left-poster">
+            <img id="left-movie-poster" src="" alt="Left Movie Poster">
+        </div>
+        <div class="movie-poster-container side-right-poster">
             <img id="right-movie-poster" src="" alt="Right Movie Poster">
         </div>
-        <div class="movie-poster-container">
+        <div class="movie-poster-container topmost-side-left-poster">
+            <img id="leftmost-movie-poster" src="" alt="Leftmost Movie Poster">
+        </div>
+        <div class="movie-poster-container topmost-side-right-poster">
             <img id="rightmost-movie-poster" src="" alt="Rightmost Movie Poster">
         </div>
     </div>
-    <h2 id="movie-title"></h2>
+    <div id="movie-title"></div>
     <button id="spin-button">Spin</button>
-</section>
+    <div class="popup"></div>
 
-<script src="js/script.js" type="module"></script>
-<script src="js/apikey.js" type="module"></script>
+    <script src="scripts.js" type="module"></script>
 </body>
 </html>

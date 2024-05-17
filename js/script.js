@@ -55,10 +55,18 @@ function populateYearDropdowns() {
     }
 }
 
-// Fetch movies based on filters
+// Shuffle array utility function
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// Fetch movies based on filters from the MovieDB API
 async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const yearQuery = (yearFrom && yearTo) ? `&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31` : '';
+    const yearQuery = yearFrom && yearTo ? `&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31` : '';
     const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false${yearQuery}${genreQuery}`);
     const data = await response.json();
     return data.results;
@@ -75,6 +83,9 @@ async function displayMovies() {
         alert('No movies found with the selected filters.');
         return;
     }
+
+    // Randomize the movie list
+    shuffleArray(movies);
 
     const currentPoster = document.getElementById('current-movie-poster');
     const leftPoster = document.getElementById('left-movie-poster');
@@ -117,6 +128,7 @@ async function displayMovies() {
     document.getElementById('spin-button').addEventListener('click', function () {
         currentIndex = 0;
         interval = 100;
+        shuffleArray(movies); // Shuffle movies on each spin
         spinMovies();
 
         setTimeout(() => {
