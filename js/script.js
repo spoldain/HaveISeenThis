@@ -102,16 +102,15 @@ function showPopup(movieItem) {
     const movieTitle = movieItem.querySelector('img').alt;
     const moviePoster = movieItem.querySelector('img').src;
 
-    popup.innerHTML = `
+      popup.innerHTML = `
         <h2>${movieTitle}</h2>
         <img src="${moviePoster}" alt="${movieTitle}">
         <button id="close-popup">Close</button>
-        <button id="more-info-btn">More Info</button>
         <div id="expanded-info" style="display: none;">
-        <h3>${movieTitle} (from showPopup)</h3> <p id="movie-description"></p>
-        <a id="trailer-link" href="#">Trailer</a>
+          <h3>${movieTitle} (from showPopup)</h3> <p id="movie-description"></p>
+          <a id="trailer-link" href="#">Trailer</a>
         </div>
-    `;
+      `;
 
     popup.style.display = 'flex';
 
@@ -210,4 +209,3 @@ document.getElementById('toggle-genre-filter').addEventListener('click', functio
 
 // Apply filters
 document.getElementById('apply-filters').addEventListener('click', displayMoviesInWheel);
-
