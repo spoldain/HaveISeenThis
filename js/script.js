@@ -4,9 +4,14 @@ import { apiKey } from './apikey.js';
 
 // Fetch genres from the MovieDB API
 async function fetchGenres() {
-    const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`);
-    const data = await response.json();
-    return data.genres;
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`);
+        const data = await response.json();
+        return data.genres;
+    } catch (error) {
+        console.error('Error fetching genres:', error);
+        return [];
+    }
 }
 
 // Populate the genre filter with options
@@ -24,7 +29,7 @@ async function populateGenreFilter() {
         checkbox.value = genre.id;
 
         const label = document.createElement('label');
-        label.for = checkbox.id;
+        label.setAttribute('for', checkbox.id);
         label.textContent = genre.name;
 
         genreItem.appendChild(checkbox);
@@ -59,11 +64,16 @@ function populateYearDropdowns() {
 
 // Fetch movies based on filters
 async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
-    const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const numMoviesToFetch = 20; // Fetch more movies for variety
-    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31${genreQuery}&page=1`);
-    const data = await response.json();
-    return data.results.slice(0, numMoviesToFetch);
+    try {
+        const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
+        const numMoviesToFetch = 20; // Fetch more movies for variety
+        const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31${genreQuery}&page=1`);
+        const data = await response.json();
+        return data.results.slice(0, numMoviesToFetch);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        return [];
+    }
 }
 
 // Fetch and display movies in the wheel
@@ -73,7 +83,17 @@ async function displayMoviesInWheel() {
     const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
     const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres);
 
+    if (!movies || movies.length === 0) {
+        console.error('No movies found');
+        return;
+    }
+
     const wheel = document.querySelector('.wheel');
+    if (!wheel) {
+        console.error('Wheel element not found');
+        return;
+    }
+
     wheel.innerHTML = ''; // Clear the wheel
 
     movies.forEach(movie => {
@@ -88,6 +108,10 @@ async function displayMoviesInWheel() {
         img.onload = () => {
             movieItem.querySelector('.loading-placeholder').style.display = 'none';
             img.style.display = 'block';
+        };
+
+        img.onerror = () => {
+            console.error(`Error loading image for movie: ${movie.title}`);
         };
 
         wheel.appendChild(movieItem);
@@ -158,6 +182,10 @@ document.getElementById('spin-button').addEventListener('click', async function(
 
     const wheel = document.querySelector('.wheel');
     const wheelItems = document.querySelectorAll('.wheel-item');
+    if (wheelItems.length === 0) {
+        console.error('No wheel items found');
+        return;
+    }
     const itemWidth = wheelItems[0].offsetWidth;
     const numItems = wheelItems.length;
 
@@ -208,4 +236,7 @@ document.getElementById('toggle-genre-filter').addEventListener('click', functio
 });
 
 // Apply filters
-document.getElementById('apply-filters').addEventListener('click', displayMoviesInWheel);
+document.getElementById('apply-filters').addEventListener('click', function(event) {
+    event.preventDefault();
+    displayMoviesInWheel();
+});

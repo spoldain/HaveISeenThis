@@ -1,5 +1,7 @@
 /* styles.css */
 
+@import url("https://fonts.googleapis.com/css?family=Lato");
+
 * {
     margin: 0;
     padding: 0;
@@ -45,15 +47,81 @@ body {
 }
 
 #year-filter {
-    display: flex;
-    align-items: center;
+    position: relative;
+    display: inline-block;
     margin-bottom: 10px;
-    overflow-y: scroll;
 }
 
-#year-filter label, #year-filter select {
+#year-filter label,
+#year-filter select {
     margin: 0 5px;
 }
+
+/* Dropdown menu styles */
+.select-hidden {
+    display: none;
+    visibility: hidden;
+    padding-right: 10px;
+}
+
+.select {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    font-size: 16px;
+    color: white;
+    width: 120px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+}
+
+.select-styled {
+    padding: 8px 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.select-styled:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-color: white transparent transparent transparent;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+}
+
+.select-options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.select-options li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.select-options li:hover,
+.select-options li.is-selected {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.select.open .select-options {
+    display: block;
+}
+
+/* End of Dropdown menu styles */
 
 #genre-filter-container {
     width: 100%;
@@ -126,37 +194,20 @@ body {
 }
 
 .wheel-container {
-    position: relative;
-    width: 300px;
-    height: 450px; /* Adjust the height as needed */
+    display: none;
     overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.15);
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    width: 100%;
 }
 
 .wheel {
     display: flex;
     transition: transform 5s ease-out;
-    width: 100%;
 }
 
 .wheel-item {
-    min-width: 100%;
-    min-height: 100%;
-    background-color: #333333;
-    border: 2px solid #333333;
-    border-radius: 10px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.5);
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: 100px;
+    flex-shrink: 0;
 }
 
 .wheel-item img {
@@ -203,22 +254,14 @@ body {
 }
 
 .popup {
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 500px;
+    background: white;
     padding: 20px;
-    background-color: #ffffff;
-    color: #000000;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .popup img {
@@ -239,4 +282,14 @@ body {
 
 .popup button:hover {
     background-color: #493273;
+}
+
+#more-info-btn {
+    display: block;
+    margin-top: 10px;
+}
+
+#expanded-info {
+    display: none;
+    margin-top: 10px;
 }
