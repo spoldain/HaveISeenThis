@@ -12,7 +12,7 @@
 
 <img src="images/logo/white-logo-1.svg" class="logo1"></img>
 
-<h1 class="website-title">Spin the wheel to find out what to watch next!</h1>
+<h1 class="website-title">Find out what to watch next!</h1>
 
 <section id="filter-section">
     <div id="year-filter">
@@ -28,14 +28,12 @@
     <button id="apply-filters">Apply Filters</button>
 </section>
 
-<section id="spinwheel-section">
-    <div class="main-frame"> <!-- Add the main frame here -->
-        <div class="wheel-container">
-            <div class="wheel">
-                <!-- Movie posters will be dynamically added here -->
-            </div>
+<section id="movie-box-section">
+    <div class="movie-box">
+        <div class="movie-poster-container">
+            <img id="current-movie-poster" src="" alt="Movie Poster">
         </div>
-        <div class="indicator-line"></div> <!-- Add the indicator line here -->
+        <h2 id="movie-title"></h2>
     </div>
     <button id="spin-button">Spin</button>
 </section>

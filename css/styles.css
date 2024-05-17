@@ -13,8 +13,8 @@ body {
     align-items: center;
     margin: 20px;
     background-image: linear-gradient(180deg, #2d0a30, #57005f, #2d0a30);
-    background-size: cover; /* Ensure the gradient covers the full height */
-    background-repeat: no-repeat; /* Prevent the gradient from repeating */
+    background-size: cover;
+    background-repeat: no-repeat;
     color: white;
     overflow-x: hidden;
 }
@@ -58,7 +58,6 @@ body {
     width: 100%;
     text-align: center;
     margin-bottom: 10px;
-    box-align: center;
 }
 
 #toggle-genre-filter {
@@ -124,68 +123,41 @@ body {
     width: 100%;
 }
 
-.wheel-container {
+.movie-display {
     position: relative;
-    width: 90%;
+    width: 300px;
+    height: 450px;
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.15);
     margin-bottom: 20px;
-}
-
-.wheel {
-    display: flex;
-    transition: transform 1s ease-out;
-    width: max-content;
-}
-
-.wheel-item {
-    min-width: 240px;
-    min-height: 350px;
-    margin: 10px;
-    background-color: #333333;
-    border: 2px solid #333333;
-    border-radius: 10px;
-    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 10px;
     box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.5);
 }
 
-.wheel-item img {
-    max-width: 95%;
-    max-height: 95%;
-    border-radius: 8px;
+#current-movie-poster {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
     box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.5);
 }
 
-.loading-placeholder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background-color: #f0f0f0;
-    color: #888;
-}
-
-.indicator-line {
-    position: absolute;
-    width: 7px;
-    height: calc(100% - 17%); /* Adjust height to match wheel container minus margin */
-    background-color: white;
-    border-radius: 50%;
-    top: 20px; /* Adjust to match margin */
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    pointer-events: none; /* So it doesn't interfere with click events */
+#movie-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 
 #spin-button {
     font-family: "Montserrat";
     position: relative;
-    bottom: -20px;
     width: fit-content;
     padding: 10px 20px;
     font-size: 35px;
