@@ -125,25 +125,59 @@ body {
 }
 
 .movie-poster-container {
-    position: relative;
-    width: 200px;
-    height: 300px;
-    margin: 0 10px;
+    position: absolute;
+    width: 170px; /* 85% of the main poster size */
+    height: 255px; /* maintaining the aspect ratio */
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    transition: transform 0.5s ease;
 }
 
 .movie-poster-container img {
     max-width: 100%;
     max-height: 100%;
     border-radius: 10px;
-    transition: transform 0.5s ease;
 }
 
-.main-poster img {
-    transform: scale(1.2);
+.main-poster {
+    width: 200px; /* Main poster size */
+    height: 300px;
+    z-index: 3;
+    transform: translateX(0);
+}
+
+.side-poster {
+    width: 170px; /* 85% of the main poster size */
+    height: 255px;
+    z-index: 2;
+}
+
+.topmost-side-poster {
+    width: 145px; /* 70% of the main poster size */
+    height: 218px;
+    z-index: 1;
+}
+
+#leftmost-movie-poster-container {
+    left: 10%;
+    transform: translateX(-50%);
+}
+
+#left-movie-poster-container {
+    left: 30%;
+    transform: translateX(-50%);
+}
+
+#right-movie-poster-container {
+    right: 30%;
+    transform: translateX(50%);
+}
+
+#rightmost-movie-poster-container {
+    right: 10%;
+    transform: translateX(50%);
 }
 
 #movie-title {
@@ -175,7 +209,7 @@ body {
     margin-bottom: 50px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     display: block;
-    margin: 10px;
+    margin: 10px auto;
 }
 
 #spin-button:hover {
