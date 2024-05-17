@@ -60,24 +60,24 @@ function populateYearDropdowns() {
 // Fetch movies based on filters
 async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom || '1900'}-01-01&primary_release_date.lte=${yearTo || new Date().getFullYear()}-12-31${genreQuery}`);
+    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31${genreQuery}`);
     const data = await response.json();
     return data.results;
 }
 
-// Fetch and display movies in the wheel
-async function displayMoviesInWheel() {
-    const yearFrom = document.getElementById('year-from').value || '1900';
-    const yearTo = document.getElementById('year-to').value || new Date().getFullYear().toString();
+// Display movies in the container
+async function displayMovies() {
+    const yearFrom = document.getElementById('year-from').value;
+    const yearTo = document.getElementById('year-to').value;
     const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
     const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres);
 
-    const wheel = document.querySelector('.wheel');
-    wheel.innerHTML = ''; // Clear the wheel
+    const movieContainer = document.querySelector('.movie-container');
+    movieContainer.innerHTML = ''; // Clear the container
 
     movies.forEach(movie => {
         const movieItem = document.createElement('div');
-        movieItem.classList.add('wheel-item');
+        movieItem.classList.add('movie-item');
         movieItem.innerHTML = `
             <div class="loading-placeholder">Loading...</div>
             <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}" style="display: none;">
@@ -89,7 +89,7 @@ async function displayMoviesInWheel() {
             img.style.display = 'block';
         };
 
-        wheel.appendChild(movieItem);
+        movieContainer.appendChild(movieItem);
     });
 }
 
@@ -103,10 +103,6 @@ function showPopup(movieItem) {
         <h2>${movieTitle}</h2>
         <img src="${moviePoster}" alt="${movieTitle}">
         <button id="close-popup">Close</button>
-        <div id="expanded-info" style="display: none;">
-          <h3>${movieTitle} (from showPopup)</h3> <p id="movie-description"></p>
-          <a id="trailer-link" href="#">Trailer</a>
-        </div>
     `;
 
     popup.style.display = 'flex';
@@ -114,75 +110,53 @@ function showPopup(movieItem) {
     document.getElementById('close-popup').addEventListener('click', function() {
         popup.style.display = 'none';
     });
-
-    const moreInfoBtn = document.createElement('button');
-    moreInfoBtn.id = 'more-info-btn';
-    moreInfoBtn.textContent = 'More Info';
-    popup.appendChild(moreInfoBtn);
-
-    moreInfoBtn.addEventListener('click', () => {
-        const expandedInfo = document.getElementById('expanded-info');
-        expandedInfo.style.display = expandedInfo.style.display === 'none' ? 'flex' : 'none';
-        moreInfoBtn.textContent = expandedInfo.style.display === 'none' ? 'More Info' : 'Less Info';
-        fetchMovieDetails(movieTitle); // Call function to fetch details on button click
-    });
 }
 
-async function fetchMovieDetails(movieTitle) {
-    const response = await fetch(`https://api.example.com/movies/${movieTitle}`);
-    const data = await response.json();
-
-    // Extract movie description and trailer link from data
-    const description = data.description;
-    const trailerLink = data.trailer_url || '#'; // Handle missing trailer links
-
-    // Update elements in the expanded info section (explained later)
-    document.getElementById('expanded-info').querySelector('h3').textContent = movieTitle;
-    document.getElementById('movie-description').textContent = description;
-    document.getElementById('trailer-link').href = trailerLink;
-}
-
-// Spin the wheel and show pop-up
+// Spin the movie posters
 document.getElementById('spin-button').addEventListener('click', async function(event) {
-    event.preventDefault(); // Add this line to prevent the default action
+    event.preventDefault();
 
-    await displayMoviesInWheel(); // Fetch new movies on each spin
+    await displayMovies(); // Fetch new movies on each spin
 
-    const wheel = document.querySelector('.wheel');
-    const wheelItems = document.querySelectorAll('.wheel-item');
-    const itemWidth = wheelItems[0].offsetWidth;
-    const numItems = wheelItems.length;
+    const movieContainer = document.querySelector('.movie-container');
+    const movieItems = document.querySelectorAll('.movie-item');
+    const numItems = movieItems.length;
+    let currentIndex = 0;
 
-    // Generate a random number of spins
-    const spins = Math.floor(Math.random() * numItems * 2) + numItems;
+    // Function to animate the spin
+    function animateSpin(duration) {
+        const startTime = performance.now();
 
-    // Calculate the final position
-    const finalPosition = spins * itemWidth;
+        function spin(time) {
+            const elapsed = time - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeOutQuart(progress);
 
-    // Set the transform property to spin the wheel
-    wheel.style.transition = 'transform 5s ease-out';
-    wheel.style.transform = `translateX(-${finalPosition}px)`;
+            currentIndex = Math.floor(easedProgress * numItems);
 
-    // Detect when spinning stops
-    setTimeout(() => {
-        // Calculate the movie under the indicator
-        const finalIndex = (spins % numItems);
-        const selectedMovie = wheelItems[finalIndex];
+            movieItems.forEach((item, index) => {
+                item.style.display = index === currentIndex ? 'block' : 'none';
+            });
 
-        // Show the pop-up with movie details
-        showPopup(selectedMovie);
-    }, 5000); // Match this time with the transition duration
+            if (progress < 1) {
+                requestAnimationFrame(spin);
+            } else {
+                showPopup(movieItems[currentIndex]);
+            }
+        }
 
-    // Reset the position after spin
-    setTimeout(() => {
-        wheel.style.transition = 'none';
-        wheel.style.transform = `translateX(-${(finalPosition % (numItems * itemWidth))}px)`;
-        setTimeout(() => {
-            wheel.style.transition = 'transform 5s ease-out';
-        }, 50);
-    }, 5050); // Slightly more than the spinning duration
+        requestAnimationFrame(spin);
+    }
+
+    // Easing function for smooth animation
+    function easeOutQuart(x) {
+        return 1 - Math.pow(1 - x, 4);
+    }
+
+    animateSpin(5000); // 5 seconds duration
 });
 
+// Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     const popupContainer = document.createElement('div');
     popupContainer.classList.add('popup');
@@ -190,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     populateYearDropdowns(); // Populate the year dropdowns
     populateGenreFilter(); // Populate the genre filter
-    displayMoviesInWheel(); // Populate the wheel container
+    displayMovies(); // Display movies initially
 });
 
 // Toggle genre filter visibility
@@ -200,4 +174,4 @@ document.getElementById('toggle-genre-filter').addEventListener('click', functio
 });
 
 // Apply filters
-document.getElementById('apply-filters').addEventListener('click', displayMoviesInWheel);
+document.getElementById('apply-filters').addEventListener('click', displayMovies);
