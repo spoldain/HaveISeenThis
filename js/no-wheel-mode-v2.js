@@ -1,4 +1,4 @@
- window.history.scrollRestoration = 'manual';
+window.history.scrollRestoration = 'manual';
 
 import { apiKey } from './apikey.js';
 
@@ -9,7 +9,7 @@ async function fetchGenres() {
     return data.genres;
 }
 
-// Populate the genre filter with options
+// Populate the genre filter with modern styling
 async function populateGenreFilter() {
     const genres = await fetchGenres();
     const genreFilter = document.getElementById('genre-filter');
@@ -29,38 +29,31 @@ async function populateGenreFilter() {
 
         genreItem.appendChild(checkbox);
         genreItem.appendChild(label);
-
         genreFilter.appendChild(genreItem);
     });
 }
 
-// Populate the year dropdowns with options
 function populateYearDropdowns() {
     const yearFromSelect = document.getElementById('year-from');
     const yearToSelect = document.getElementById('year-to');
     const currentYear = new Date().getFullYear();
 
-    const defaultOption = document.createElement('option');
-    defaultOption.text = '--';
-    defaultOption.value = '';
-    yearFromSelect.add(defaultOption);
-    yearToSelect.add(defaultOption.cloneNode(true));
+    const createOption = (val, text) => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.text = text;
+        return opt;
+    };
+
+    yearFromSelect.add(createOption('', '--'));
+    yearToSelect.add(createOption('', '--'));
 
     for (let year = currentYear; year >= 1900; year--) {
-        const option = document.createElement('option');
-        option.text = year;
-        option.value = year;
-        yearFromSelect.add(option);
-        yearToSelect.add(option.cloneNode(true));
+        yearFromSelect.add(createOption(year, year));
+        yearToSelect.add(createOption(year, year));
     }
 }
 
-// Populate media type dropdown
-//function populateTypeDropdown() {
-    
-//}
-
-// Shuffle array utility function
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -68,127 +61,93 @@ function shuffleArray(array) {
     }
 }
 
-// Fetch movies based on filters
-async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres) {
+async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres, mediaType) {
     const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const yearQuery = (yearFrom && yearTo) ? `&primary_release_date.gte=${yearFrom}-01-01&primary_release_date.lte=${yearTo}-12-31` : '';
-    const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false${yearQuery}${genreQuery}`);
+    const yearParam = mediaType === 'tv' ? 'first_air_date' : 'primary_release_date';
+    const yearQuery = (yearFrom && yearTo) ? `&${yearParam}.gte=${yearFrom}-01-01&${yearParam}.lte=${yearTo}-12-31` : '';
+    
+    const response = await fetch(`https://api.themoviedb.org/3/discover/${mediaType}?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false${yearQuery}${genreQuery}`);
     const data = await response.json();
     return data.results;
 }
 
-// Display movie posters and title
 async function displayMovies() {
     const yearFrom = document.getElementById('year-from').value;
     const yearTo = document.getElementById('year-to').value;
+    const mediaType = document.getElementById('media-type').value;
     const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
-    const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres);
+    
+    const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres, mediaType);
 
-    if (movies.length === 0) {
-        alert('No movies found with the selected filters.');
+    if (movies.length < 5) {
+        alert('Please select broader filters. We need at least 5 results to spin!');
         return;
     }
 
-    const currentPoster = document.getElementById('current-movie-poster');
-    const leftPoster = document.getElementById('left-movie-poster');
-    const rightPoster = document.getElementById('right-movie-poster');
-    const leftmostPoster = document.getElementById('leftmost-movie-poster');
-    const rightmostPoster = document.getElementById('rightmost-movie-poster');
+    const posters = {
+        current: document.getElementById('current-movie-poster'),
+        left: document.getElementById('left-movie-poster'),
+        right: document.getElementById('right-movie-poster'),
+        leftmost: document.getElementById('leftmost-movie-poster'),
+        rightmost: document.getElementById('rightmost-movie-poster')
+    };
     const movieTitle = document.getElementById('movie-title');
 
     let currentIndex = 0;
 
     function showMovie(index) {
-        currentPoster.src = `https://image.tmdb.org/t/p/w500${movies[index].poster_path}`;
-        currentPoster.alt = movies[index].title;
-        movieTitle.textContent = movies[index].title;
+        const getMovie = (offset) => movies[(index + offset + movies.length) % movies.length];
+        const getImg = (movie) => movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image';
 
-        leftPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index - 1 + movies.length) % movies.length].poster_path}`;
-        leftPoster.alt = movies[(index - 1 + movies.length) % movies.length].title;
+        posters.current.src = getImg(getMovie(0));
+        movieTitle.textContent = getMovie(0).title || getMovie(0).name;
 
-        rightPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index + 1) % movies.length].poster_path}`;
-        rightPoster.alt = movies[(index + 1) % movies.length].title;
-
-        leftmostPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index - 2 + movies.length) % movies.length].poster_path}`;
-        leftmostPoster.alt = movies[(index - 2 + movies.length) % movies.length].title;
-
-        rightmostPoster.src = `https://image.tmdb.org/t/p/w500${movies[(index + 2) % movies.length].poster_path}`;
-        rightmostPoster.alt = movies[(index + 2) % movies.length].title;
+        posters.left.src = getImg(getMovie(-1));
+        posters.right.src = getImg(getMovie(1));
+        posters.leftmost.src = getImg(getMovie(-2));
+        posters.rightmost.src = getImg(getMovie(2));
     }
 
     let intervalId;
-    let interval = 100;
+    let speed = 100;
 
-    function spinMovies() {
+    function runSpin(duration) {
         clearInterval(intervalId);
         intervalId = setInterval(() => {
             currentIndex = (currentIndex + 1) % movies.length;
             showMovie(currentIndex);
-        }, interval);
-    }
-
-    document.getElementById('spin-button').addEventListener('click', function () {
-        currentIndex = 0;
-        interval = 100;
-        shuffleArray(movies); // Shuffle movies on each spin
-        spinMovies();
+        }, speed);
 
         setTimeout(() => {
-            clearInterval(intervalId);
-            let slowdownIntervalId = setInterval(() => {
-                if (interval < 1000) {
-                    interval += 100;
-                    clearInterval(intervalId);
-                    intervalId = setInterval(() => {
-                        currentIndex = (currentIndex + 1) % movies.length;
-                        showMovie(currentIndex);
-                    }, interval);
-                } else {
-                    clearInterval(slowdownIntervalId);
-                    clearInterval(intervalId);
-                }
-            }, 500);
-        }, 2000);
-    });
+            if (speed < 600) {
+                speed += 150;
+                runSpin(400);
+            } else {
+                clearInterval(intervalId);
+            }
+        }, duration);
+    }
+
+    document.getElementById('spin-button').onclick = () => {
+        speed = 80;
+        shuffleArray(movies);
+        runSpin(1500);
+    };
 
     showMovie(currentIndex);
 }
 
-// Show pop-up with movie details
-function showPopup(movie) {
-    const popup = document.querySelector('.popup');
-    const movieTitle = movie.title;
-    const moviePoster = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-
-    popup.innerHTML = `
-        <h2>${movieTitle}</h2>
-        <img src="${moviePoster}" alt="${movieTitle}">
-        <button id="close-popup">Close</button>
-    `;
-
-    popup.style.display = 'flex';
-
-    document.getElementById('close-popup').addEventListener('click', function () {
-        popup.style.display = 'none';
-    });
-}
-
-// Initial setup
-document.addEventListener('DOMContentLoaded', function () {
-    const popupContainer = document.createElement('div');
-    popupContainer.classList.add('popup');
-    document.body.appendChild(popupContainer);
-
+// Initialization
+document.addEventListener('DOMContentLoaded', () => {
     populateYearDropdowns();
     populateGenreFilter();
     displayMovies();
 });
 
-// Toggle genre filter visibility
-document.getElementById('toggle-genre-filter').addEventListener('click', function () {
-    const genreFilter = document.getElementById('genre-filter');
-    genreFilter.style.display = genreFilter.style.display === 'none' ? 'flex' : 'none';
+// UI Toggles
+document.getElementById('toggle-genre-filter').addEventListener('click', function() {
+    const filter = document.getElementById('genre-filter');
+    filter.style.display = (filter.style.display === 'grid') ? 'none' : 'grid';
 });
 
-// Apply filters
 document.getElementById('apply-filters').addEventListener('click', displayMovies);
