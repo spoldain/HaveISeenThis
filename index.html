@@ -4,43 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/images/logo/favicon.ico">
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles-nowheel-v2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <title>Have I Seen This?</title>
 </head>
 <body>
 
-<img src="images/logo/white-logo-1.svg" class="logo1"></img>
+    <header class="app-header">
+        <img src="images/logo/white-logo-1.svg" class="logo1" alt="Logo">
+        <h1 class="website-title">Discover</h1>
+    </header>
 
-<h1 class="website-title">Spin the wheel to find out what to watch next!</h1>
-
-<section id="filter-section">
-    <div id="year-filter">
-        <label for="year-from">Year From:</label>
-        <select id="year-from"></select>
-        <label for="year-to">Year To:</label>
-        <select id="year-to"></select>
-    </div>
-    <div id="genre-filter-container">
-        <button id="toggle-genre-filter">Toggle Genre Filter</button>
-        <div id="genre-filter"></div>
-    </div>
-    <button id="apply-filters">Apply Filters</button>
-</section>
-
-<section id="spinwheel-section">
-    <div class="main-frame"> <!-- Add the main frame here -->
-        <div class="wheel-container">
-            <div class="wheel">
-                <!-- Movie posters will be dynamically added here -->
+    <main class="main-container">
+        <aside class="filter-sidebar">
+            <h3>Filters</h3>
+            <div class="filter-group">
+                <label>Release Years</label>
+                <div class="year-inputs">
+                    <select id="year-from"></select>
+                    <span>to</span>
+                    <select id="year-to"></select>
+                </div>
             </div>
-        </div>
-        <div class="indicator-line"></div> <!-- Add the indicator line here -->
-    </div>
-    <button id="spin-button">Spin</button>
-</section>
 
-<script src="js/script.js" type="module"></script>
-<script src="js/apikey.js" type="module"></script>
+            <div class="filter-group">
+                <label>Media Type</label>
+                <select id="media-type">
+                    <option value="movie">Movies</option>
+                    <option value="tv">TV Shows</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <button id="toggle-genre-filter" class="secondary-btn">Select Genres</button>
+                <div id="genre-filter" class="genre-grid"></div>
+            </div>
+
+            <button id="apply-filters" class="primary-btn">Update Results</button>
+        </aside>
+
+        <section class="showcase-section">
+            <div class="movie-display-wrapper">
+                <div class="movie-box">
+                    <div class="poster-slot side-low">
+                        <img id="leftmost-movie-poster" src="" alt="">
+                    </div>
+                    <div class="poster-slot side-mid">
+                        <img id="left-movie-poster" src="" alt="">
+                    </div>
+                    <div class="poster-slot center-focus">
+                        <img id="current-movie-poster" src="" alt="">
+                        <div class="movie-info-overlay">
+                            <h2 id="movie-title">Ready?</h2>
+                        </div>
+                    </div>
+                    <div class="poster-slot side-mid">
+                        <img id="right-movie-poster" src="" alt="">
+                    </div>
+                    <div class="poster-slot side-low">
+                        <img id="rightmost-movie-poster" src="" alt="">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="spin-button">SPIN THE WHEEL</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/no-wheel-mode-v2.js" type="module"></script>
+    <script src="js/apikey.js" type="module"></script>
 </body>
 </html>

@@ -1,0 +1,225 @@
+ /* styles.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    background-image: linear-gradient(180deg, #2d0a30, #57005f, #2d0a30);
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+    overflow-x: hidden;
+}
+
+.logo1 {
+    max-width: 15%;
+    height: auto;
+}
+
+.website-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 35px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 3px 0 7px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+#filter-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#year-filter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#year-filter label, #year-filter select {
+    margin: 0 5px;
+}
+
+#genre-filter-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#toggle-genre-filter {
+    background-color: #391878;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+#toggle-genre-filter:hover {
+    background-color: #493273;
+}
+
+#genre-filter {
+    align-content: center;
+    width: 40%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    margin: 0 auto;
+}
+
+#genre-filter input[type="checkbox"] {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+#genre-filter label {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#genre-filter input {
+    margin-right: 5px;
+}
+
+#apply-filters {
+    background-color: #391878;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+#apply-filters:hover {
+    background-color: #493273;
+}
+
+.movie-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+    height: 500px;
+}
+
+.movie-poster-container {
+    position: relative;
+    width: 200px;
+    height: 300px;
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.movie-poster-container img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    transition: transform 0.5s ease;
+}
+
+.main-poster img {
+    transform: scale(1.2);
+}
+
+#movie-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+#spin-button {
+    font-family: "Montserrat";
+    position: relative;
+    width: fit-content;
+    padding: 10px 20px;
+    font-size: 35px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    cursor: pointer;
+    background-size: 200% auto;
+    background-image: linear-gradient(to right, #DA22FF 0%, #9733EE 51%, #DA22FF 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    margin-bottom: 50px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    display: block;
+    margin: 10px auto;
+}
+
+#spin-button:hover {
+    background-position: right center;
+    color: #fff;
+    text-decoration: none;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.popup img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.popup button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #391878;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.popup button:hover {
+    background-color: #493273;
+}
