@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/x-icon" href="/images/logo/favicon.ico">
     <link rel="stylesheet" href="css/styles-nowheel-v2.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
@@ -12,59 +12,54 @@
 
     <header class="app-header">
         <img src="images/logo/white-logo-1.svg" class="logo1" alt="Logo">
-        <h1 class="website-title">Discover</h1>
     </header>
 
     <main class="main-container">
-        <aside class="filter-sidebar">
-            <h3 class="sidebar-title">Filters</h3>
-            
-            <div class="filter-group">
-                <label>Media Type</label>
-                <select id="media-type">
-                    <option value="movie">Movies</option>
-                    <option value="tv">TV Shows</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>Release Years</label>
-                <div class="year-inputs">
-                    <select id="year-from"></select>
-                    <span>to</span>
-                    <select id="year-to"></select>
+        <section class="showcase-section">
+            <div class="stage-container">
+                <div class="stage">
+                    <div class="viewport-mask"></div>
+                    <div id="wheel-track" class="wheel-track"></div>
                 </div>
             </div>
+        </section>
 
-            <div class="filter-group">
-                <label>Genres</label>
-                <div id="genre-filter" class="genre-chips"></div>
+        <section class="result-area">
+            <div class="movie-info-overlay">
+                <h2 id="movie-title">Ready to Spin?</h2>
             </div>
+            <div class="button-area">
+                <button id="spin-button">SPIN THE WHEEL</button>
+            </div>
+        </section>
 
-            <button id="apply-filters" class="primary-btn">Update Results</button>
-        </aside>
-
-        <section class="showcase-section">
-            <div class="movie-box">
-                <div class="poster-slot side-low"><img id="leftmost-movie-poster" src="" alt=""></div>
-                <div class="poster-slot side-mid"><img id="left-movie-poster" src="" alt=""></div>
-                <div class="poster-slot center-focus">
-                    <img id="current-movie-poster" src="" alt="">
-                    <div class="movie-info-overlay">
-                        <h2 id="movie-title">Ready?</h2>
+        <section class="filter-bottom-area">
+            <div class="filter-card">
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <label>Media Type</label>
+                        <select id="media-type">
+                            <option value="movie">Movies</option>
+                            <option value="tv">TV Shows</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Release Years</label>
+                        <div class="year-inputs">
+                            <select id="year-from"></select>
+                            <select id="year-to"></select>
+                        </div>
                     </div>
                 </div>
-                <div class="poster-slot side-mid"><img id="right-movie-poster" src="" alt=""></div>
-                <div class="poster-slot side-low"><img id="rightmost-movie-poster" src="" alt=""></div>
-            </div>
-            
-            <div class="controls">
-                <button id="spin-button">SPIN THE WHEEL</button>
+                <div class="filter-item">
+                    <label>Genres</label>
+                    <div id="genre-filter" class="genre-chips"></div>
+                </div>
             </div>
         </section>
     </main>
 
-    <script src="js/no-wheel-mode-v2.js" type="module"></script>
-    <script src="js/apikey.js" type="module"></script>
+    <script src="js/apikey.js"></script>
+    <script src="js/no-wheel-mode-v2.js"></script>
 </body>
 </html>
