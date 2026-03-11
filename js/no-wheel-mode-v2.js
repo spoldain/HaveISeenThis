@@ -1,153 +1,132 @@
 window.history.scrollRestoration = 'manual';
-
 import { apiKey } from './apikey.js';
 
-// Fetch genres from the MovieDB API
 async function fetchGenres() {
     const response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`);
     const data = await response.json();
     return data.genres;
 }
 
-// Populate the genre filter with modern styling
 async function populateGenreFilter() {
     const genres = await fetchGenres();
     const genreFilter = document.getElementById('genre-filter');
+    genreFilter.innerHTML = ''; 
 
     genres.forEach(genre => {
         const genreItem = document.createElement('div');
         genreItem.classList.add('genre-item');
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `genre-${genre.id}`;
-        checkbox.value = genre.id;
-
-        const label = document.createElement('label');
-        label.htmlFor = checkbox.id;
-        label.textContent = genre.name;
-
-        genreItem.appendChild(checkbox);
-        genreItem.appendChild(label);
+        genreItem.innerHTML = `
+            <input type="checkbox" id="genre-${genre.id}" value="${genre.id}">
+            <label for="genre-${genre.id}">${genre.name}</label>
+        `;
         genreFilter.appendChild(genreItem);
     });
 }
 
 function populateYearDropdowns() {
-    const yearFromSelect = document.getElementById('year-from');
-    const yearToSelect = document.getElementById('year-to');
+    const yearFrom = document.getElementById('year-from');
+    const yearTo = document.getElementById('year-to');
     const currentYear = new Date().getFullYear();
-
-    const createOption = (val, text) => {
-        const opt = document.createElement('option');
-        opt.value = val;
-        opt.text = text;
-        return opt;
-    };
-
-    yearFromSelect.add(createOption('', '--'));
-    yearToSelect.add(createOption('', '--'));
-
-    for (let year = currentYear; year >= 1900; year--) {
-        yearFromSelect.add(createOption(year, year));
-        yearToSelect.add(createOption(year, year));
+    const createOpt = (v, t) => { let o = document.createElement('option'); o.value = v; o.text = t; return o; };
+    yearFrom.add(createOpt('', '--'));
+    yearTo.add(createOpt('', '--'));
+    for (let i = currentYear; i >= 1900; i--) {
+        yearFrom.add(createOpt(i, i));
+        yearTo.add(createOpt(i, i));
     }
 }
 
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 }
 
-async function fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres, mediaType) {
-    const genreQuery = selectedGenres.length ? `&with_genres=${selectedGenres.join(',')}` : '';
-    const yearParam = mediaType === 'tv' ? 'first_air_date' : 'primary_release_date';
-    const yearQuery = (yearFrom && yearTo) ? `&${yearParam}.gte=${yearFrom}-01-01&${yearParam}.lte=${yearTo}-12-31` : '';
+async function getMovies() {
+    const yf = document.getElementById('year-from').value;
+    const yt = document.getElementById('year-to').value;
+    const type = document.getElementById('media-type').value;
+    const genres = Array.from(document.querySelectorAll('.genre-item input:checked')).map(i => i.value);
     
-    const response = await fetch(`https://api.themoviedb.org/3/discover/${mediaType}?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false${yearQuery}${genreQuery}`);
-    const data = await response.json();
+    const yearParam = type === 'tv' ? 'first_air_date' : 'primary_release_date';
+    const yearQuery = (yf && yt) ? `&${yearParam}.gte=${yf}-01-01&${yearParam}.lte=${yt}-12-31` : '';
+    const genreQuery = genres.length ? `&with_genres=${genres.join(',')}` : '';
+
+    const res = await fetch(`https://api.themoviedb.org/3/discover/${type}?api_key=${apiKey}${yearQuery}${genreQuery}&sort_by=popularity.desc&include_adult=false`);
+    const data = await res.json();
     return data.results;
 }
 
-async function displayMovies() {
-    const yearFrom = document.getElementById('year-from').value;
-    const yearTo = document.getElementById('year-to').value;
-    const mediaType = document.getElementById('media-type').value;
-    const selectedGenres = Array.from(document.querySelectorAll('#genre-filter input:checked')).map(input => input.value);
-    
-    const movies = await fetchMoviesWithFilters(yearFrom, yearTo, selectedGenres, mediaType);
-
+async function initShowcase() {
+    let movies = await getMovies();
     if (movies.length < 5) {
-        alert('Please select broader filters. We need at least 5 results to spin!');
+        alert("Found too few results. Try broadening your filters!");
         return;
     }
 
-    const posters = {
-        current: document.getElementById('current-movie-poster'),
-        left: document.getElementById('left-movie-poster'),
-        right: document.getElementById('right-movie-poster'),
-        leftmost: document.getElementById('leftmost-movie-poster'),
-        rightmost: document.getElementById('rightmost-movie-poster')
+    const p = {
+        c: document.getElementById('current-movie-poster'),
+        l: document.getElementById('left-movie-poster'),
+        r: document.getElementById('right-movie-poster'),
+        lm: document.getElementById('leftmost-movie-poster'),
+        rm: document.getElementById('rightmost-movie-poster')
     };
-    const movieTitle = document.getElementById('movie-title');
+    const titleContainer = document.getElementById('movie-title');
+    let idx = 0;
 
-    let currentIndex = 0;
+    const render = (i) => {
+        const movieAt = (off) => movies[(i + off + movies.length) % movies.length];
+        const path = (m) => m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
+        
+        const current = movieAt(0);
+        const name = current.title || current.name;
+        const dateStr = current.release_date || current.first_air_date || "";
+        const year = dateStr ? `(${dateStr.split('-')[0]})` : "";
 
-    function showMovie(index) {
-        const getMovie = (offset) => movies[(index + offset + movies.length) % movies.length];
-        const getImg = (movie) => movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image';
+        // Applying the bold/not-bold formatting
+        titleContainer.innerHTML = `${name} <span class="year-text">${year}</span>`;
 
-        posters.current.src = getImg(getMovie(0));
-        movieTitle.textContent = getMovie(0).title || getMovie(0).name;
+        p.c.src = path(current);
+        p.l.src = path(movieAt(-1));
+        p.r.src = path(movieAt(1));
+        p.lm.src = path(movieAt(-2));
+        p.rm.src = path(movieAt(2));
+    };
 
-        posters.left.src = getImg(getMovie(-1));
-        posters.right.src = getImg(getMovie(1));
-        posters.leftmost.src = getImg(getMovie(-2));
-        posters.rightmost.src = getImg(getMovie(2));
-    }
+    let timer;
+    let speed = 80;
 
-    let intervalId;
-    let speed = 100;
-
-    function runSpin(duration) {
-        clearInterval(intervalId);
-        intervalId = setInterval(() => {
-            currentIndex = (currentIndex + 1) % movies.length;
-            showMovie(currentIndex);
+    const spin = (duration) => {
+        clearInterval(timer);
+        timer = setInterval(() => {
+            idx = (idx + 1) % movies.length;
+            render(idx);
         }, speed);
 
         setTimeout(() => {
             if (speed < 600) {
-                speed += 150;
-                runSpin(400);
+                speed += 130;
+                spin(400);
             } else {
-                clearInterval(intervalId);
+                clearInterval(timer);
             }
         }, duration);
-    }
+    };
 
     document.getElementById('spin-button').onclick = () => {
         speed = 80;
-        shuffleArray(movies);
-        runSpin(1500);
+        shuffle(movies);
+        spin(2000);
     };
 
-    showMovie(currentIndex);
+    render(idx);
 }
 
-// Initialization
 document.addEventListener('DOMContentLoaded', () => {
     populateYearDropdowns();
     populateGenreFilter();
-    displayMovies();
+    initShowcase();
 });
 
-// UI Toggles
-document.getElementById('toggle-genre-filter').addEventListener('click', function() {
-    const filter = document.getElementById('genre-filter');
-    filter.style.display = (filter.style.display === 'grid') ? 'none' : 'grid';
-});
-
-document.getElementById('apply-filters').addEventListener('click', displayMovies);
+document.getElementById('apply-filters').onclick = initShowcase;
